@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    string Email = ViewBag.Email;
+    string Otp = ViewBag.Otp;
+}
+
+<head>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+
+<body class="button">
+    <br />
+    <br />
+    <br />
+
+    <div class="container ">
+        <div class="row ">
+            <div class="col-md-6 mx-auto ">
+                <div class="card border border-warning border-3">
+                    <div class="card-body ">
+                        <div class="rounded-circle d-flex justify-content-center align-items-center">
+                            <img src="~/mdb5-free-standard/img/ceilogo.png" class="img-fluid" alt="Logo" />
+                            <br /><br />
+                        </div>
+
+                        <!--username-->
+
+                        <div class="d-inline p-2 text-black mx-5 font-weight-bold">
+
+                            <b class="">Username</b>
+
+                            <input type="text" id="email" name="email" class="form-control rounded-pill w-50  d-inline p-2 border-warning" /><span style="vertical-align: middle;" class="mx-1">@@ceiamerica.com</span>
+                            <span class="text-center"><div id="email-error" class="text-danger "></div></span>
+                            <br />
+                            <div id="email-error" class="text-danger"></div>
+                            <div style="margin-left:150px">
+                                <button type="button" id="load-index" class="rounded-pill button  text-white btn-outline-warning" data-mdb-toggle="collapse" data-mdb-target="#extra-portion" aria-controls="collapse" aria-expanded="false">  Send OTP </button>
+                                <span id="timerDisplay" class="mx-3"></span>
+                            </div>
+                            <br />
+                        </div>
+
+
+                        <!--OTP-->
+                        <form method="post" action="/home/LoginAuth" onsubmit="return VerifyOtp(event)">
+                            <div id="my-div" class="d-none">
+                                <!--<div class="collapse" id="extra-portion">-->
+                                <div class="d-inline p-2 text-black mx-5 font-weight-bold">
+                                    <b>OTP</b>
+                                    <input type="text" id="userotp" name="userotp" class="form-control rounded-pill w-50 mx-5 d-inline p-2 border-warning" />
+                                    <!-- <input type="text" id="userotp" name="userotp" class="form-control rounded-pill w-50 mx-5 d-inline p-2 border-warning">-->
+                                    <span class="text-center"><div id="otp-error" class="text-danger "></div></span>
+                                    <br />
+
+                                    <div style="margin-left:150px">
+                                        <button type="submit" id="sendOTP" class="cei-color rounded-pill button  w-25 text-white btn-outline-warning" data-mdb-target="#extra-portion" aria-controls="collapse" aria-expanded="false">  Login </button>
+                                    </div>
+                                    <br /><br />
+                                    <!--</div>-->
+                                </div>
+
+
+                                <div>
+                                    <input type="text" id="email2" name="email2" value="@Email" />
+                                    <input type="text" id="otp" name="otp" value="@Otp" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+<script>
+    function VerifyOtp(event){
+        var otp=document.getElementById("otp");
+
+        var otpval=otp.value;
+        var userotp=document.getElementById("userotp");
+        var userotpval = userotp.value;
+
+        var email = document.getElementById("email2");
+        var emailval = email.value;
+      //alert(otpval+userotpval);
+
+        if (otpval != userotpval || userotpval=="") {
+            const otpError = document.getElementById("otp-error");
+            otpError.innerText = "Please enter valid OTP !";
+            event.preventDefault();
+            // Prevent the form from submitting
+            return false;
+        }
+
+        return true;
+
+    }
+</script>
+<script>
+    /* function myFunction() {
+
+         // Do something here
+         var modifiedContent = decodeURIComponent(document.cookie.replace(/(?:(?:^|.*;\s*)modified_content\s*\=\s*([^;]*).*$)|^.*$/, "$1"));
+         if(modifiedContent=="error"){
+         // Use the stored value to restore the modified content
+         document.getElementById("email-error").innerHTML = "Please enter valid Email";
+             document.cookie = "modified_content=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+         }
+     }
+     window.addEventListener("load", myFunction);*/
+
+</script>
+<script>
+
+    $(function() {
+      $('#load-index').click(function() {
+
+              const emailError = document.getElementById("email-error");
+              const divToShow = document.getElementById("my-div");
+              var email = document.getElementById("email").value;
+              const sendotpbtn = document.getElementById("load-index");
+              console.log(email);
+              if (email == "") {
+                  var cookie="error";
+                  //document.cookie = "modified_content=" + encodeURIComponent(cookie);
+
+
+
+                  // Reload the page
+                 //location.reload();
+                  emailError.innerText = "Please enter valid Username ";
+                  // Retrieve the stored value after the page has reloaded
+
+
+              } else {
+                  divToShow.classList.remove("d-none");
+                  emailError.innerText = "";
+
+
+
+
+
+                  let duration = 10; // in seconds 
+                  startTimer(duration);
+                  function startTimer(duration) {
+                      let timer = duration; const intervalId = setInterval(function () {
+                          const seconds = parseInt(timer % 60, 10);
+                          console.log(seconds)
+                          timerDisplay.textContent = seconds <= 10 ? "0" + seconds :"";
+                           if (timer === duration) {
+                              sendotpbtn.style.backgroundColor = "gray";
+
+                              $('#load-index').prop('disabled', true);// Change to your desired color
+                          }
+                          if (--timer < 0) {
+                              clearInterval(intervalId);
+
+                              timerDisplay.textContent = "";
+                              sendotpbtn.innerHTML = "Resend OTP";
+                              sendotpbtn.style.backgroundColor = "";
+                               $('#load-index').prop('disabled', false);
+                          }
+                      }, 1000);
+                  }
+              }
+        var inputValue = $('#email').val(); // Get the value of the input field
+        $.ajax({
+          url: '/',
+                  type: 'post',
+                  data: { email: inputValue },
+          success: function(response) {
+                      var resultArray = response.split(",")
+                       var str1 = resultArray[0];
+          var str2 = resultArray[1];
+                      $('#otp').val(str1);
+                      $('#email2').val(str2);
+                      setTimeout(function () {
+                          $('#otp').val("");
+                          // Insert your code here to be executed after 1 minute
+                      }, 600000);
+
+            // Do something with the response data
+          }
+        });
+      });
+    });
+</script>

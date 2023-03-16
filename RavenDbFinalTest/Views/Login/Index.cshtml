@@ -1,0 +1,8 @@
+﻿@using (Html.BeginForm("CheckEmail", "Login", FormMethod.Post))
+{
+    @Html.Label("Email Address : ")
+    @Html.TextBox("emailAddress")
+    @Html.ValidationMessage("emailAddress")
+    <br />
+    <input type="submit" value="Submit" />
+}

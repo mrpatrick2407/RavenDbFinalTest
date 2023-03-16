@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDbFinalTest", "RavenDbFinalTest\RavenDbFinalTest.csproj", "{C725F5EC-ECA5-453A-A596-51D1F1F533C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C725F5EC-ECA5-453A-A596-51D1F1F533C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C725F5EC-ECA5-453A-A596-51D1F1F533C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C725F5EC-ECA5-453A-A596-51D1F1F533C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C725F5EC-ECA5-453A-A596-51D1F1F533C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E76CA24-BF7D-4CAA-8EF5-6721258DC56B}
+	EndGlobalSection
+EndGlobal

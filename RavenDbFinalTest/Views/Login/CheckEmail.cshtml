@@ -1,0 +1,34 @@
+﻿@*@{
+    ViewData["Title"] = "Check Email";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (ViewBag.EmailExists != null && ViewBag.EmailExists)
+{
+    <p>The email address @ViewBag.EmailAddress exists in the database.</p>
+}
+else
+{
+    <p>The email address @ViewBag.EmailAddress does not exist in the database.</p>
+}
+
+<a asp-controller="Home" asp-action="Index">Back to home</a>
+*@
+@{
+    ViewData["Title"] = "Check Email";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (ViewBag.EmailExists != null && ViewBag.EmailExists)
+{
+    <p>The email address @ViewBag.EmailAddress exists in the database.</p>
+    <p>@ViewBag.RoleMessage</p>
+}
+else
+{
+    <p>The email address @ViewBag.EmailAddress does not exist in the database.</p>
+}
+
+<a asp-controller="Home" asp-action="Index">Back to home</a>
