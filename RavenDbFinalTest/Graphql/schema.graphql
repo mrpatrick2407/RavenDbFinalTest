@@ -1,0 +1,3 @@
+﻿type Query {
+  emailExists(email: String!): Boolean!
+}
