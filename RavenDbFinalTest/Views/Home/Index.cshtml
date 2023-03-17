@@ -121,7 +121,6 @@
 
     $(function() {
       $('#load-index').click(function() {
-
               const emailError = document.getElementById("email-error");
               const divToShow = document.getElementById("my-div");
               var email = document.getElementById("email").value;
@@ -142,18 +141,12 @@
               } else {
                   divToShow.classList.remove("d-none");
                   emailError.innerText = "";
-
-
-
-
-
-                  let duration = 10; // in seconds 
+                  let duration = 5; // in seconds 
                   startTimer(duration);
                   function startTimer(duration) {
                       let timer = duration; const intervalId = setInterval(function () {
                           const seconds = parseInt(timer % 60, 10);
-                          console.log(seconds)
-                          timerDisplay.textContent = seconds <= 10 ? "0" + seconds :"";
+                          timerDisplay.textContent = seconds < 10 ? "0" + seconds :"";
                            if (timer === duration) {
                               sendotpbtn.style.backgroundColor = "gray";
 
@@ -169,10 +162,57 @@
                           }
                       }, 1000);
                   }
+
+                var inputValue = $('#email').val(); // Get the value of the input field
+                $.ajax({
+                    url: '/home/Emailcheck',
+                    type: 'post',
+                    data: { email: inputValue },
+                    success: function (response) {
+                        console.log("if1");
+                        console.log(response);
+                        if (response) {
+                            console.log("This is if");
+                            $.ajax({
+                                url: '/',
+                                type: 'post',
+                                data: { email: inputValue },
+                                success: function (response) {
+                                    this is 
+                                    var resultArray = response.split(",")
+                                    var str1 = resultArray[0];
+                                    var str2 = resultArray[1];
+                                    $('#otp').val(str1);
+                                    $('#email2').val(str2);
+                                    setTimeout(function () {
+                                        $('#otp').val("");
+                                        // Insert your code here to be executed after 1 minute
+                                    }, 600000);
+                                }
+                            });
+                        }
+                        else {
+                            console.log("This is else");
+                            divToShow.classList.add("d-none");
+                            // Email doesn't exist, show error message
+                            $('#email-error').show();
+                            emailError.innerText = "Invalid Username";
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    // handle AJAX error here
+                    console.log(textStatus + ': ' + errorThrown);
+                });
+
               }
-        var inputValue = $('#email').val(); // Get the value of the input field
-        $.ajax({
-          url: '/',
+           
+   /*     $.ajax({
+          url: '/view',
                   type: 'post',
                   data: { email: inputValue },
           success: function(response) {
@@ -188,7 +228,7 @@
 
             // Do something with the response data
           }
-        });
+        });*/
       });
     });
 </script>

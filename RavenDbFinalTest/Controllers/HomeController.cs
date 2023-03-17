@@ -9,6 +9,9 @@ using System.Reflection;
 using Raven.Client.Documents;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Mail;
+using GraphQL.Client.Http;
+using GraphQL;
+using GraphQL.Client.Serializer.Newtonsoft;
 
 
 namespace RavenDbFinalTest.Controllers
@@ -90,6 +93,40 @@ namespace RavenDbFinalTest.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Emailcheck(string email)
+        {
+            try
+            {
+                var originalemail = email + "@ceiamerica.com";
+                var client = new GraphQLHttpClient(new GraphQLHttpClientOptions
+                {
+                    EndPoint = new Uri("https://localhost:7000/graphql")
+                }, new NewtonsoftJsonSerializer());
+
+                var graphQLRequest = new GraphQLRequest
+                {
+                    Query = @"query($email: String!) {
+                emailExists(email: $email)
+            }",
+                    Variables = new { email = originalemail }
+                };
+
+                var graphQLResponse = await client.SendQueryAsync<dynamic>(graphQLRequest);
+                var emailExistsInGraphQL = graphQLResponse.Data.emailExists;
+                Console.WriteLine(Json(emailExistsInGraphQL));
+                return Json(emailExistsInGraphQL);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Test");
+                return BadRequest();
+            }
+        }
+
+
         public int Otp { get; set; }
         [HttpPost]
         public async Task<IActionResult> LoginAuth(string otp, string email2, string userotp)
@@ -182,6 +219,8 @@ namespace RavenDbFinalTest.Controllers
             }
 
         }
+
+        /*
         [HttpPost]
         public ActionResult CheckEmail(string emailAddress)
         {
@@ -233,7 +272,7 @@ namespace RavenDbFinalTest.Controllers
 
             }
         }
-    
+    */
 public async Task<IActionResult> LoginAuth()
         {
             string Token = HttpContext.Session.GetString("cToken");
