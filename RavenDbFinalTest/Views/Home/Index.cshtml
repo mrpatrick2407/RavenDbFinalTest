@@ -139,30 +139,7 @@
 
 
               } else {
-                  divToShow.classList.remove("d-none");
-                  emailError.innerText = "";
-                  let duration = 5; // in seconds 
-                  startTimer(duration);
-                  function startTimer(duration) {
-                      let timer = duration; const intervalId = setInterval(function () {
-                          const seconds = parseInt(timer % 60, 10);
-                          timerDisplay.textContent = seconds < 10 ? "0" + seconds :"";
-                           if (timer === duration) {
-                              sendotpbtn.style.backgroundColor = "gray";
-
-                              $('#load-index').prop('disabled', true);// Change to your desired color
-                          }
-                          if (--timer < 0) {
-                              clearInterval(intervalId);
-
-                              timerDisplay.textContent = "";
-                              sendotpbtn.innerHTML = "Resend OTP";
-                              sendotpbtn.style.backgroundColor = "";
-                               $('#load-index').prop('disabled', false);
-                          }
-                      }, 1000);
-                  }
-
+                 
                 var inputValue = $('#email').val(); // Get the value of the input field
                 $.ajax({
                     url: '/home/Emailcheck',
@@ -170,15 +147,39 @@
                     data: { email: inputValue },
                     success: function (response) {
                         console.log("if1");
-                        console.log(response);
-                        if (response) {
+                        console.log(response+"hi");
+                        if (response==true) {
                             console.log("This is if");
+                            divToShow.classList.remove("d-none");
+                            emailError.innerText = "";
+                            let duration = 5; // in seconds 
+                            startTimer(duration);
+                            function startTimer(duration) {
+                                let timer = duration; const intervalId = setInterval(function () {
+                                    const seconds = parseInt(timer % 60, 10);
+                                    timerDisplay.textContent = seconds < 10 ? "0" + seconds : "";
+                                    if (timer === duration) {
+                                        sendotpbtn.style.backgroundColor = "gray";
+
+                                        $('#load-index').prop('disabled', true);// Change to your desired color
+                                    }
+                                    if (--timer < 0) {
+                                        clearInterval(intervalId);
+
+                                        timerDisplay.textContent = "";
+                                        sendotpbtn.innerHTML = "Resend OTP";
+                                        sendotpbtn.style.backgroundColor = "";
+                                        $('#load-index').prop('disabled', false);
+                                    }
+                                }, 1000);
+                            }
+
                             $.ajax({
                                 url: '/',
                                 type: 'post',
                                 data: { email: inputValue },
                                 success: function (response) {
-                                    this is 
+                                    console.log("Done sending mail");
                                     var resultArray = response.split(",")
                                     var str1 = resultArray[0];
                                     var str2 = resultArray[1];
@@ -193,7 +194,8 @@
                         }
                         else {
                             console.log("This is else");
-                            $('#my-div').class
+                            divToShow.classList.add("d-none");
+
                             // Email doesn't exist, show error message
                             $('#email-error').show();
                             emailError.innerText = "Invalid Username";

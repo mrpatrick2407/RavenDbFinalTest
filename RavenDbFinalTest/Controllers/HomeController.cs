@@ -114,7 +114,8 @@ namespace RavenDbFinalTest.Controllers
                 };
 
                 var graphQLResponse = await client.SendQueryAsync<dynamic>(graphQLRequest);
-                var emailExistsInGraphQL = graphQLResponse.Data.emailExists;
+                bool emailExistsInGraphQL = graphQLResponse.Data.emailExists;
+                Console.WriteLine(emailExistsInGraphQL);
                 Console.WriteLine(Json(emailExistsInGraphQL));
                 return Json(emailExistsInGraphQL);
             }
