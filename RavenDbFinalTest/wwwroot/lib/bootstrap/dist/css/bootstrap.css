@@ -593,6 +593,10 @@ progress {
   height: auto;
 }
 
+.img-circle {
+
+}
+
 .img-thumbnail {
   padding: 0.25rem;
   background-color: #fff;

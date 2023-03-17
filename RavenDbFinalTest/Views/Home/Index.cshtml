@@ -18,25 +18,31 @@
     <div class="container ">
         <div class="row ">
             <div class="col-md-6 mx-auto ">
-                <div class="card border border-warning border-3">
+                <div class="card border border-warning border-4 " style="border-radius:50px; height:40rem;">
                     <div class="card-body ">
                         <div class="rounded-circle d-flex justify-content-center align-items-center">
-                            <img src="~/mdb5-free-standard/img/ceilogo.png" class="img-fluid" alt="Logo" />
-                            <br /><br />
+                            <img src="~/mdb5-free-standard/img/ceilogo.png" class="img-fluid " style="   
+     outline: 3px solid gold;
+border-radius:50%;
+" alt="Logo" />
+                            <br /><br /><br />
+                           
                         </div>
-
+                        <br />
                         <!--username-->
 
-                        <div class="d-inline p-2 text-black mx-5 font-weight-bold">
+                        <div class="d-flex p-2 text-black mx-5 font-weight-bold" style="flex-direction:column;align-items:center;justify-content:center;">
+                            <div>
+                                <b class="">Username</b>
 
-                            <b class="">Username</b>
-
-                            <input type="text" id="email" name="email" class="form-control rounded-pill w-50  d-inline p-2 border-warning" /><span style="vertical-align: middle;" class="mx-1">@@ceiamerica.com</span>
-                            <span class="text-center"><div id="email-error" class="text-danger "></div></span>
-                            <br />
-                            <div id="email-error" class="text-danger"></div>
-                            <div style="margin-left:150px">
-                                <button type="button" id="load-index" class="rounded-pill button  text-white btn-outline-warning" data-mdb-toggle="collapse" data-mdb-target="#extra-portion" aria-controls="collapse" aria-expanded="false">  Send OTP </button>
+                                <input type="text" id="email" name="email" class="form-control rounded-7 w-50  d-inline p-2 border-warning" />@@ceiamerica.com
+                                <span class="text-center"><div id="email-error" class="text-danger "></div></span>
+                                <br />
+                                <div id="email-error" class="text-danger"></div>
+                            </div>
+                           
+                            <div style>
+                                <button type="button" id="load-index" class="rounded-7 button  text-white btn-outline-warning" data-mdb-toggle="collapse" data-mdb-target="#extra-portion" aria-controls="collapse" aria-expanded="false">  Send OTP </button>
                                 <span id="timerDisplay" class="mx-3"></span>
                             </div>
                             <br />
@@ -45,24 +51,25 @@
 
                         <!--OTP-->
                         <form method="post" action="/home/LoginAuth" onsubmit="return VerifyOtp(event)">
-                            <div id="my-div" class="d-none">
+                            <div >
                                 <!--<div class="collapse" id="extra-portion">-->
-                                <div class="d-inline p-2 text-black mx-5 font-weight-bold">
+                                <div id="my-div" class="d-none d-flex p-2 text-black mx-5 font-weight-bold" style="flex-direction:column;align-items:center;justify-content:center; position:relative;
+left:-20px;">
                                     <b>OTP</b>
-                                    <input type="text" id="userotp" name="userotp" class="form-control rounded-pill w-50 mx-5 d-inline p-2 border-warning" />
+                                    <input type="text" id="userotp" name="userotp" class="form-control rounded-7 w-50 mx-5 d-inline p-2 border-warning" />
                                     <!-- <input type="text" id="userotp" name="userotp" class="form-control rounded-pill w-50 mx-5 d-inline p-2 border-warning">-->
                                     <span class="text-center"><div id="otp-error" class="text-danger "></div></span>
                                     <br />
 
-                                    <div style="margin-left:150px">
-                                        <button type="submit" id="sendOTP" class="cei-color rounded-pill button  w-25 text-white btn-outline-warning" data-mdb-target="#extra-portion" aria-controls="collapse" aria-expanded="false">  Login </button>
+                                    <div style="margin-left:0px">
+                                        <button type="submit" id="sendOTP" class="cei-color rounded-7 button  text-white btn-outline-warning" data-mdb-target="#extra-portion" aria-controls="collapse" aria-expanded="false">  Login </button>
                                     </div>
                                     <br /><br />
                                     <!--</div>-->
                                 </div>
 
 
-                                <div>
+                                <div class="d-none">
                                     <input type="text" id="email2" name="email2" value="@Email" />
                                     <input type="text" id="otp" name="otp" value="@Otp" />
                                 </div>
@@ -129,12 +136,13 @@
               if (email == "") {
                   var cookie="error";
                   //document.cookie = "modified_content=" + encodeURIComponent(cookie);
+                divToShow.classList.add("d-none");
 
 
 
                   // Reload the page
                  //location.reload();
-                  emailError.innerText = "Please enter valid Username ";
+                  emailError.innerText = "Enter Username";
                   // Retrieve the stored value after the page has reloaded
 
 
