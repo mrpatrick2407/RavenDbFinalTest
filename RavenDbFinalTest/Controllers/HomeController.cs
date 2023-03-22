@@ -30,6 +30,7 @@ namespace RavenDbFinalTest.Controllers
         public IActionResult Index()
         {
             return View();
+            
         }
         [HttpPost]
 
@@ -115,84 +116,90 @@ namespace RavenDbFinalTest.Controllers
 
                 var graphQLResponse = await client.SendQueryAsync<dynamic>(graphQLRequest);
                 bool emailExistsInGraphQL = graphQLResponse.Data.emailExists;
-                Console.WriteLine(emailExistsInGraphQL);
-                Console.WriteLine(Json(emailExistsInGraphQL));
+                
                 return Json(emailExistsInGraphQL);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Test");
+                
                 return BadRequest();
             }
         }
 
-
+ /*       public async Task<IActionResult> Verygood(string otp,string email2,string userotp)
+        {
+            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint =new Uri("https://localhost:7000/graphql" )}, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest {
+                Query= @"query ExampleQuery($email:String!){
+             roleCheck(email: $email)
+            }",Variables=new { email = email2 }
+            };
+            var res = await client.SendQueryAsync<dynamic>(graphqlreq);
+            Console.WriteLine(res);
+            return Json(res);
+        }
+ */
         public int Otp { get; set; }
         [HttpPost]
         public async Task<IActionResult> LoginAuth(string otp, string email2, string userotp)
         {
-            if (otp == userotp)
+            try
             {
-                var certificate = new X509Certificate2("ClientCertificate.pfx", "Theophilus");
-
-                using (var store = new DocumentStore
+                var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                var graphqlreq = new GraphQLRequest
                 {
-                    Urls = new[] { " https://a.theophilus.ravendb.community" },
-                    Database = "TestEmployee",
-                    Certificate = certificate
-                })
+                    Query = @"query example($email:String!){
+                  getemployee(email: $email) {
+                  emailId
+                  role
+                  name
+                  }
+                }",
+                    Variables = new { email = email2 }
+                };
+                var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                var user = res.Data.getemployee;
+                
+
+                if (user.role == "Admin")
                 {
-                    store.Initialize();
-
-
-                    using (var session = store.OpenSession())
+                    ViewBag.RoleMessage = $"{user.Name}, You are Admin";
+                }else if (user.role == "Employee")
+                {
+                    string ipadresscurr = HttpContext.Connection.RemoteIpAddress.ToString();
+                    
+                    ViewBag.RoleMessage = $"{user.Name}, You are Employee";
+                    var loginactivity = new GraphQLRequest
                     {
-                        var employee = session.Query<LoginData>(collectionName: "Companies").FirstOrDefault(u => u.EmailId == email2);
-                        if (employee != null)
-                        {
-                            ViewBag.EmailExists = true;
-                            if (employee.role == "Admin")
-                            {
-                                ViewBag.RoleMessage = $"{employee.Name}, You are Admin";
+                        Query = @"mutation example($email:String!,$ip:String!){
+                  savelogin(email: $email,ip: $ip) {
+                    id
+                    loginTime
+                    ipAddress
+                  }
+                }",
+                        Variables = new { email = email2, ip = ipadresscurr }
+                    };
+                    var logres =await client2.SendQueryAsync<dynamic>(loginactivity);
+                    var reponse = logres.Data.savelogin;
+                    Console.WriteLine(reponse);
 
-                            }
-                            else if(employee.role == "Employee")
-                            {
-
-                                var login = new Login()
-                                {
-                                    EmailAddress = email2,
-                                    LoginTime = DateTime.UtcNow,
-                                    IpAddress = HttpContext.Connection.RemoteIpAddress.ToString()
-
-                                };
-                                session.Store(login, login.Id);
-                                session.SaveChanges();
-                                ViewBag.RoleMessage = $"{employee.Name}, You are Employee";
-                            }
-                        }
-                        else
-                        {
-                            ViewBag.EmailExists = false;
-                        }
-
-                    }
-
+               
                    
-
                 }
+
                 //karuppaiah code begins
                 HttpClient client = new HttpClient();
                 var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5000/getcred");
-                var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("email", email2) });
+                var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("email", email2), new KeyValuePair<string, string>("otp", userotp) });
                 request.Content = content;
 
                 HttpResponseMessage response = await client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 // Deserialize the response body to a JSON object
                 string responseBody = await response.Content.ReadAsStringAsync();
-
+                
 
                 var json = JsonSerializer.Deserialize<JsonElement>(responseBody);
                 string CustomToken = json.GetProperty("customToken").GetString();
@@ -201,24 +208,21 @@ namespace RavenDbFinalTest.Controllers
 
                 HttpContext.Session.SetString("cToken", CustomToken);
                 string myValue = HttpContext.Session.GetString("cToken");
-                return View("~/Views/Home/LoginAuth.cshtml");
+                return Content("Valid OTP");
                 /* return new ContentResult
                  {
                      Content = "Hi " + email2+" Login successfull" + myValue,
                      ContentType = "text/plain",
                      StatusCode = 200
                  };*/
-            }
-            else
-            {
-                return new ContentResult
-                {
-                    Content = "Enter valid otp",
-                    ContentType = "text/plain",
-                    StatusCode = 200
-                };
-            }
 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                ViewBag.Error = "Invalid OTP";
+                return Content("Invalid OTP");
+            }
         }
 
         /*

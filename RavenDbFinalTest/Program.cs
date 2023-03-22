@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddGraphQL(sp => SchemaBuilder.New()
         .AddQueryType<QueryResolver>()
+        .AddMutationType<Mutationcs>()
         .Create());
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -26,8 +27,9 @@ builder.Services.AddSingleton<IDocumentStore>(provider =>
         Database = "TestEmployee",
         Certificate = new X509Certificate2("ClientCertificate.pfx", "Theophilus")
     }.Initialize());
-builder.Services.AddGraphQLServer()
-        .AddQueryType<QueryResolver>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
     //    .AddSchemaFromFile("./GraphQL/schema.graphql"); 
 
 

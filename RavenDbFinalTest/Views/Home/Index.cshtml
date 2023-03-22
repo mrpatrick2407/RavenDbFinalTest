@@ -2,6 +2,8 @@
     ViewData["Title"] = "Home Page";
     string Email = ViewBag.Email;
     string Otp = ViewBag.Otp;
+    string Error = ViewBag.Error;
+    
 }
 
 <head>
@@ -69,10 +71,11 @@ left:-20px;">
                                 </div>
 
 
-                                <div class="d-none">
+                                <div >
                                     <input type="text" id="email2" name="email2" value="@Email" />
                                     <input type="text" id="otp" name="otp" value="@Otp" />
                                 </div>
+                                
                             </div>
                         </form>
                     </div>
@@ -87,158 +90,115 @@ left:-20px;">
 
 </body>
 <script>
-    function VerifyOtp(event){
-        var otp=document.getElementById("otp");
-
-        var otpval=otp.value;
-        var userotp=document.getElementById("userotp");
-        var userotpval = userotp.value;
-
-        var email = document.getElementById("email2");
+    function VerifyOtp(event) {
+        event.preventDefault();
+        var otp = document.getElementById("otp");
+        var otpval = otp.value;
+        var userotp = document.getElementById("userotp");
+        var userotpval = userotp.value; var email = document.getElementById("email2");
         var emailval = email.value;
-      //alert(otpval+userotpval);
+        $.ajax({
+            url: '/home/LoginAuth',
+            type: 'post',
+            data: {
+                otp: otpval,
+                email2: emailval,
+                userotp: userotpval
+            },
+            success: function (response) {
+                if (response == "Invalid OTP") {
+                    alert(response);
+                }
+                else {
+                    window.location.href = "https://localhost:7000/home/LoginAuth";
+                }                 
+            }
+        });
+    }</script>
+<script>
+    function myFunction() {
+        if (@Error == "Invalid OTP") {
+            const emailError = document.getElementById("email-error");
+            emailError.innerText = "Invalid OTP";
+        }
+    }
+    window.addEventListener("load", myFunction);</script>
+<script>
+    const loadIndexBtn = document.getElementById('load-index');
+    loadIndexBtn.addEventListener('click', function () {
+        const emailError = document.getElementById('email-error');
+        const divToShow = document.getElementById('my-div');
+        const email = document.getElementById('email').value;
+        const sendotpbtn = document.getElementById('load-index');
 
-        if (otpval != userotpval || userotpval=="") {
-            const otpError = document.getElementById("otp-error");
-            otpError.innerText = "Please enter valid OTP !";
-            event.preventDefault();
-            // Prevent the form from submitting
-            return false;
+        if (email == '') {
+            divToShow.classList.add('d-none');
+            emailError.innerText = 'Enter Username';
+            return;
         }
 
-        return true;
+        else{
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/home/Emailcheck');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response) {
+                        divToShow.classList.remove('d-none');
+                        emailError.innerText = '';
+                        let duration = 5;
+                        startTimer(duration);
 
-    }
-</script>
-<script>
-    /* function myFunction() {
-
-         // Do something here
-         var modifiedContent = decodeURIComponent(document.cookie.replace(/(?:(?:^|.*;\s*)modified_content\s*\=\s*([^;]*).*$)|^.*$/, "$1"));
-         if(modifiedContent=="error"){
-         // Use the stored value to restore the modified content
-         document.getElementById("email-error").innerHTML = "Please enter valid Email";
-             document.cookie = "modified_content=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-         }
-     }
-     window.addEventListener("load", myFunction);*/
-
-</script>
-<script>
-
-    $(function() {
-      $('#load-index').click(function() {
-              const emailError = document.getElementById("email-error");
-              const divToShow = document.getElementById("my-div");
-              var email = document.getElementById("email").value;
-              const sendotpbtn = document.getElementById("load-index");
-              console.log(email);
-              if (email == "") {
-                  var cookie="error";
-                  //document.cookie = "modified_content=" + encodeURIComponent(cookie);
-                divToShow.classList.add("d-none");
-
-
-
-                  // Reload the page
-                 //location.reload();
-                  emailError.innerText = "Enter Username";
-                  // Retrieve the stored value after the page has reloaded
-
-
-              } else {
-                 
-                var inputValue = $('#email').val(); // Get the value of the input field
-                $.ajax({
-                    url: '/home/Emailcheck',
-                    type: 'post',
-                    data: { email: inputValue },
-                    success: function (response) {
-                        console.log("if1");
-                        console.log(response+"hi");
-                        if (response==true) {
-                            console.log("This is if");
-                            divToShow.classList.remove("d-none");
-                            emailError.innerText = "";
-                            let duration = 5; // in seconds 
-                            startTimer(duration);
-                            function startTimer(duration) {
-                                let timer = duration; const intervalId = setInterval(function () {
-                                    const seconds = parseInt(timer % 60, 10);
-                                    timerDisplay.textContent = seconds < 10 ? "0" + seconds : "";
-                                    if (timer === duration) {
-                                        sendotpbtn.style.backgroundColor = "gray";
-
-                                        $('#load-index').prop('disabled', true);// Change to your desired color
-                                    }
-                                    if (--timer < 0) {
-                                        clearInterval(intervalId);
-
-                                        timerDisplay.textContent = "";
-                                        sendotpbtn.innerHTML = "Resend OTP";
-                                        sendotpbtn.style.backgroundColor = "";
-                                        $('#load-index').prop('disabled', false);
-                                    }
-                                }, 1000);
-                            }
-
-                            $.ajax({
-                                url: '/',
-                                type: 'post',
-                                data: { email: inputValue },
-                                success: function (response) {
-                                    console.log("Done sending mail");
-                                    var resultArray = response.split(",")
-                                    var str1 = resultArray[0];
-                                    var str2 = resultArray[1];
-                                    $('#otp').val(str1);
-                                    $('#email2').val(str2);
-                                    setTimeout(function () {
-                                        $('#otp').val("");
-                                        // Insert your code here to be executed after 1 minute
-                                    }, 600000);
+                        function startTimer(duration) {
+                            let timer = duration;
+                            const intervalId = setInterval(function () {
+                                const seconds = parseInt(timer % 60, 10);
+                                timerDisplay.textContent = seconds < 10 ? '0' + seconds : '';
+                                if (timer === duration) {
+                                    sendotpbtn.style.backgroundColor = 'gray';
+                                    sendotpbtn.disabled = true;
                                 }
-                            });
+                                if (--timer < 0) {
+                                    clearInterval(intervalId);
+                                    timerDisplay.textContent = '';
+                                    sendotpbtn.innerHTML = 'Resend OTP';
+                                    sendotpbtn.style.backgroundColor = '';
+                                    sendotpbtn.disabled = false;
+                                }
+                            }, 1000);
                         }
-                        else {
-                            console.log("This is else");
-                            divToShow.classList.add("d-none");
 
-                            // Email doesn't exist, show error message
-                            $('#email-error').show();
-                            emailError.innerText = "Invalid Username";
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(jqXHR);
-                        console.log(textStatus);
-                        console.log(errorThrown);
+                        const xhr2 = new XMLHttpRequest();
+                        xhr2.open('POST', '/');
+                        xhr2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        xhr2.onload = function () {
+                            if (xhr2.status === 200) {
+                                console.log('Done sending mail');
+                                const resultArray = xhr2.responseText.split(',');
+                                const str1 = resultArray[0];
+                                const str2 = resultArray[1];
+                                document.getElementById('otp').value = str1;
+                                document.getElementById('email2').value = str2;
+                                setTimeout(function () {
+                                    document.getElementById('otp').value = '';
+                                }, 600000);
+                            } else {
+                                console.log('Request failed.  Returned status of ' + xhr2.status);
+                            }
+                        };
+                        xhr2.send('email=' + encodeURIComponent(email));
+                    } else {
+                        divToShow.classList.add('d-none');
+                        emailError.innerText = 'Invalid Username';
                     }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    // handle AJAX error here
-                    console.log(textStatus + ': ' + errorThrown);
-                });
+                } else {
+                    console.log('Request failed.  Returned status of ' + xhr.status);
+                }
+            };
+            xhr.send('email=' + encodeURIComponent(email));
 
-              }
-           
-   /*     $.ajax({
-          url: '/view',
-                  type: 'post',
-                  data: { email: inputValue },
-          success: function(response) {
-                      var resultArray = response.split(",")
-                       var str1 = resultArray[0];
-          var str2 = resultArray[1];
-                      $('#otp').val(str1);
-                      $('#email2').val(str2);
-                      setTimeout(function () {
-                          $('#otp').val("");
-                          // Insert your code here to be executed after 1 minute
-                      }, 600000);
+         }
+       });
 
-            // Do something with the response data
-          }
-        });*/
-      });
-    });
 </script>
