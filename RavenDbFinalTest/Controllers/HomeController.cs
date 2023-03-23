@@ -12,7 +12,7 @@ using System.Net.Mail;
 using GraphQL.Client.Http;
 using GraphQL;
 using GraphQL.Client.Serializer.Newtonsoft;
-
+using GraphQL.Client.Abstractions;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -36,29 +36,48 @@ namespace RavenDbFinalTest.Controllers
 
         public async Task<IActionResult> Index(String email)
         {
-            try
-            {
+              var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("http://localhost:4000/graphql") }, new NewtonsoftJsonSerializer());
+                var graphqlreq = new GraphQLRequest
+                {
+                        Query = @"query($email: String){
+                          SendEmailQuery(email: $email)
+                        }",
+                    Variables = new { email = email+"@ceiamerica.com" }
+                };
+                var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            Console.WriteLine(res);
+                var SendEmailRes = res.Data.SendEmailQuery;
+                if (SendEmailRes == "error")
+                {
+                    return Content("Something went wrong");
+                }
+                else
+                {
+                    return Content(email + "@ceiamerica.com");
+                }
+                /*  HttpClient client = new HttpClient();
+                  var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5000/sendemail");
+                  var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("emailID", email + "@ceiamerica.com") });
+                  request.Content = content;
 
-                HttpClient client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5000/sendemail");
-                var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("emailID", email + "@ceiamerica.com") });
-                request.Content = content;
-
-                HttpResponseMessage response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                // Deserialize the response body to a JSON object
-                string responseBody = await response.Content.ReadAsStringAsync();
+                  HttpResponseMessage response = await client.SendAsync(request);
+                  response.EnsureSuccessStatusCode();
+                  // Deserialize the response body to a JSON object
+                  string responseBody = await response.Content.ReadAsStringAsync();
 
 
-                var json = JsonSerializer.Deserialize<JsonElement>(responseBody);
-                
-                string otp = json.GetProperty("message").GetString();
+                  var json = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
-                ViewBag.Otp = otp;
-                TempData["otp"] = otp;
-                TempData["email"] = email + "@ceiamerica.com";
-                ViewBag.Email = email + "@ceiamerica.com";
-                return Content(otp + "," + email + "@ceiamerica.com");
+                  string otp = json.GetProperty("message").GetString();
+
+                  ViewBag.Otp = otp;
+                  TempData["otp"] = otp;
+                  TempData["email"] = email + "@ceiamerica.com";
+                  ViewBag.Email = email + "@ceiamerica.com";
+                  return Content(otp + "," + email + "@ceiamerica.com");*/
+
+//Old code ends here
+
                 /*return new ContentResult
                 {
                     Content = otp,
@@ -87,12 +106,8 @@ namespace RavenDbFinalTest.Controllers
                 // Extract the OTP value from the JSON object
                 //string otp = jsonObject.GetProperty("otp").GetString();
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return BadRequest(ex.Message);
-            }
+
+           
         }
 
         [HttpPost]
@@ -142,10 +157,9 @@ namespace RavenDbFinalTest.Controllers
  */
         public int Otp { get; set; }
         [HttpPost]
-        public async Task<IActionResult> LoginAuth(string otp, string email2, string userotp)
+        public async Task<IActionResult> LoginAuth( string email2, int userotp)
         {
-            try
-            {
+            
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -172,11 +186,11 @@ namespace RavenDbFinalTest.Controllers
                     ViewBag.RoleMessage = $"{user.Name}, You are Employee";
                     var loginactivity = new GraphQLRequest
                     {
-                        Query = @"mutation example($email:String!,$ip:String!){
-                  savelogin(email: $email,ip: $ip) {
-                    id
+                        Query = @"mutation example($email:String!){
+                  savelogin(email: $email) {
+                    
                     loginTime
-                    ipAddress
+                    
                   }
                 }",
                         Variables = new { email = email2}
@@ -189,7 +203,26 @@ namespace RavenDbFinalTest.Controllers
                    
                 }
 
-                //karuppaiah code begins
+
+            //New code begins
+
+            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("http://localhost:4000/graphql") }, new NewtonsoftJsonSerializer());
+
+            var Graphlogauth = new GraphQLRequest
+            {
+                Query = @"query($userotp: Int){
+                  cred(userotp: $userotp)
+                }",
+                Variables = new { userotp = userotp }
+            };
+            var logauthres = await client.SendQueryAsync<dynamic>(Graphlogauth);
+            string ctoken = logauthres.Data.cred;
+            HttpContext.Session.SetString("cToken", ctoken);
+            string myValue = HttpContext.Session.GetString("cToken");
+            return Content("Valid OTP");
+
+
+            /*    //karuppaiah old code begins
                 HttpClient client = new HttpClient();
                 var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5000/getcred");
                 var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("email", email2), new KeyValuePair<string, string>("otp", userotp) });
@@ -208,21 +241,16 @@ namespace RavenDbFinalTest.Controllers
 
                 HttpContext.Session.SetString("cToken", CustomToken);
                 string myValue = HttpContext.Session.GetString("cToken");
-                return Content("Valid OTP");
-                /* return new ContentResult
-                 {
-                     Content = "Hi " + email2+" Login successfull" + myValue,
-                     ContentType = "text/plain",
-                     StatusCode = 200
-                 };*/
+                return Content("Valid OTP");*/
+            /* return new ContentResult
+             {
+                 Content = "Hi " + email2+" Login successfull" + myValue,
+                 ContentType = "text/plain",
+                 StatusCode = 200
+             };*/
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                ViewBag.Error = "Invalid OTP";
-                return Content("Invalid OTP");
-            }
+
+
         }
 
         /*
@@ -278,11 +306,26 @@ namespace RavenDbFinalTest.Controllers
             }
         }
     */
-public async Task<IActionResult> LoginAuth()
+        public async Task<IActionResult> LoginAuth(string email2)
         {
             string Token = HttpContext.Session.GetString("cToken");
             if (Token != null)
             {
+                var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                var graphqlreq = new GraphQLRequest
+                {
+                    Query = @"query example($email:String!){
+                  getemployee(email: $email) {
+                  emailId
+                  role
+                  name
+                  }
+                }",
+                    Variables = new { email = email2 }
+                };
+                var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                var user = res.Data.getemployee;
+                ViewBag.name = user.name;
                 return View();
             }
             else

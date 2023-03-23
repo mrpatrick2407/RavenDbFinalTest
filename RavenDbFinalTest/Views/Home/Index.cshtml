@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
     string Email = ViewBag.Email;
-    string Otp = ViewBag.Otp;
+
     string Error = ViewBag.Error;
     
 }
@@ -73,7 +73,7 @@ left:-20px;">
 
                                 <div >
                                     <input type="text" id="email2" name="email2" value="@Email" />
-                                    <input type="text" id="otp" name="otp" value="@Otp" />
+                                    
                                 </div>
                                 
                             </div>
@@ -92,8 +92,6 @@ left:-20px;">
 <script>
     function VerifyOtp(event) {
         event.preventDefault();
-        var otp = document.getElementById("otp");
-        var otpval = otp.value;
         var userotp = document.getElementById("userotp");
         var userotpval = userotp.value; var email = document.getElementById("email2");
         var emailval = email.value;
@@ -101,7 +99,7 @@ left:-20px;">
             url: '/home/LoginAuth',
             type: 'post',
             data: {
-                otp: otpval,
+             
                 email2: emailval,
                 userotp: userotpval
             },
@@ -110,7 +108,7 @@ left:-20px;">
                     alert(response);
                 }
                 else {
-                    window.location.href = "https://localhost:7000/home/LoginAuth";
+                    window.location.href = "https://localhost:7000/home/LoginAuth?email="+emailval;
                 }                 
             }
         });
@@ -175,11 +173,11 @@ left:-20px;">
                         xhr2.onload = function () {
                             if (xhr2.status === 200) {
                                 console.log('Done sending mail');
-                                const resultArray = xhr2.responseText.split(',');
+                            /*    const resultArray = xhr2.responseText.split(',');
                                 const str1 = resultArray[0];
                                 const str2 = resultArray[1];
-                                document.getElementById('otp').value = str1;
-                                document.getElementById('email2').value = str2;
+                                    document.getElementById('otp').value = str1;*/
+                                document.getElementById('email2').value = xhr2.responseText;
                                 setTimeout(function () {
                                     document.getElementById('otp').value = '';
                                 }, 600000);
