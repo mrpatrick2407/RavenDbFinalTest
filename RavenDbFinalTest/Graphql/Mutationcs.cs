@@ -25,14 +25,14 @@ namespace RavenDbFinalTest.Graphql
 
         [GraphQLName("savelogin")]
 
-        public Login? savelogin(string email,string ip)
+        public Login? savelogin([Service] IHttpContextAccessor accessor,string email)
         {
             using(var session=store.OpenSession())
             {
                 var login = new Login
                 {
                     EmailAddress = email,
-                    IpAddress = ip,
+                    IpAddress = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                     LoginTime = DateTime.UtcNow
 
                 };

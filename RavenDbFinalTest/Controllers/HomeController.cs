@@ -167,7 +167,7 @@ namespace RavenDbFinalTest.Controllers
                     ViewBag.RoleMessage = $"{user.Name}, You are Admin";
                 }else if (user.role == "Employee")
                 {
-                    string ipadresscurr = HttpContext.Connection.RemoteIpAddress.ToString();
+                   
                     
                     ViewBag.RoleMessage = $"{user.Name}, You are Employee";
                     var loginactivity = new GraphQLRequest
@@ -179,7 +179,7 @@ namespace RavenDbFinalTest.Controllers
                     ipAddress
                   }
                 }",
-                        Variables = new { email = email2, ip = ipadresscurr }
+                        Variables = new { email = email2}
                     };
                     var logres =await client2.SendQueryAsync<dynamic>(loginactivity);
                     var reponse = logres.Data.savelogin;
