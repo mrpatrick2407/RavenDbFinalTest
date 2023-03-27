@@ -24,9 +24,9 @@
                     <div class="card-body ">
                         <div class="rounded-circle d-flex justify-content-center align-items-center">
                             <img src="~/mdb5-free-standard/img/ceilogo.png" class="img-fluid " style="   
-     outline: 3px solid gold;
-border-radius:50%;
-" alt="Logo" />
+                                 outline: 3px solid gold;
+                            border-radius:50%;
+                            " alt="Logo" />
                             <br /><br /><br />
                            
                         </div>
@@ -93,9 +93,9 @@ left:-20px;">
     function VerifyOtp(event) {
         event.preventDefault();
         var userotp = document.getElementById("userotp");
-        var userotpval = userotp.value; var email = document.getElementById("email2");
+        var userotpval = userotp.value; var email = document.getElementById("email");
         const error = document.getElementById('otp-error');
-        var emailval = email.value;
+        var emailval = email.value+"@@ceiamerica.com";
         var xhr = new XMLHttpRequest();
         var url = '/home/LoginAuth';
         var params = 'email2=' + encodeURIComponent(emailval) + '&userotp=' + encodeURIComponent(userotpval);
@@ -192,10 +192,7 @@ left:-20px;">
                                 const str1 = resultArray[0];
                                 const str2 = resultArray[1];
                                     document.getElementById('otp').value = str1;*/
-                                document.getElementById('email2').value = xhr2.responseText;
-                                setTimeout(function () {
-                                    document.getElementById('otp').value = '';
-                                }, 600000);
+                              
                             } else {
                                 console.log('Request failed.  Returned status of ' + xhr2.status);
                             }
