@@ -4,15 +4,12 @@ using RavenDbFinalTest.Models;
 using System.Diagnostics;
 using Raven.Client.Documents;
 using RavenDbFinalTest.Models;
-using System.Linq;
-using System.Reflection;
-using Raven.Client.Documents;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Mail;
+
+
 using GraphQL.Client.Http;
 using GraphQL;
 using GraphQL.Client.Serializer.Newtonsoft;
-using GraphQL.Client.Abstractions;
+
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -317,31 +314,41 @@ namespace RavenDbFinalTest.Controllers
         }
     */
         public async Task<IActionResult> LoginAuth(string email2)
-        {
-            string Token = HttpContext.Session.GetString("cToken");
-            if (Token != null)
+        {   
+            try
             {
-                var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-                var graphqlreq = new GraphQLRequest
+
+                string Token = HttpContext.Session.GetString("cToken");
+                if (Token != null)
                 {
-                    Query = @"query example($email:String!){
+                    var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                    var graphqlreq = new GraphQLRequest
+                    {
+                        Query = @"query example($email:String!){
                   getemployee(email: $email) {
                   emailId
                   role
                   name
                   }
                 }",
-                    Variables = new { email = email2 }
-                };
-                var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
-                var user = res.Data.getemployee;
-                ViewBag.name = user.name;
-                return View();
-            }
-            else
+                        Variables = new { email = email2 }
+                    };
+                    var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                    var user = res.Data.getemployee;
+                    ViewBag.name = user.name;
+                    return View();
+                }
+                else
+                {
+                    return Redirect("Index");
+                }
+
+            }catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Redirect("Index");
             }
+            
         }
 
         public IActionResult Logout()
