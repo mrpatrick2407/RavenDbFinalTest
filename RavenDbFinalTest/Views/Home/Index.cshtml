@@ -94,6 +94,7 @@ left:-20px;">
         event.preventDefault();
         var userotp = document.getElementById("userotp");
         var userotpval = userotp.value; var email = document.getElementById("email2");
+        const error = document.getElementById('otp-error');
         var emailval = email.value;
         $.ajax({
             url: '/home/LoginAuth',
@@ -105,22 +106,16 @@ left:-20px;">
             },
             success: function (response) {
                 if (response == "Invalid OTP") {
-                    alert(response);
+                    error.innerText="Please Enter Valid OTP"
                 }
                 else {
                     window.location.href = "https://localhost:7000/home/LoginAuth?email2="+emailval;
                 }                 
             }
         });
-    }</script>
-<script>
-    function myFunction() {
-        if (@Error == "Invalid OTP") {
-            const emailError = document.getElementById("email-error");
-            emailError.innerText = "Invalid OTP";
-        }
     }
-    window.addEventListener("load", myFunction);</script>
+    </script>
+
 <script>
     const loadIndexBtn = document.getElementById('load-index');
     loadIndexBtn.addEventListener('click', function () {
@@ -128,7 +123,6 @@ left:-20px;">
         const divToShow = document.getElementById('my-div');
         const email = document.getElementById('email').value;
         const sendotpbtn = document.getElementById('load-index');
-
         if (email == '') {
             divToShow.classList.add('d-none');
             emailError.innerText = 'Enter Username';

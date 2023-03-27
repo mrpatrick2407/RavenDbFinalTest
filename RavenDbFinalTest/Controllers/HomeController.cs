@@ -214,13 +214,16 @@ namespace RavenDbFinalTest.Controllers
             };
             var logauthres = await client.SendQueryAsync<dynamic>(Graphlogauth);
             string ctoken = logauthres.Data.cred;
+            Console.WriteLine($"{ctoken}");
             if(ctoken == "Invalid OTP")
             {
+                Console.WriteLine("If");
                 return Content(ctoken);
+                
             }
             else
             {
-
+                Console.WriteLine("Else");
                 HttpContext.Session.SetString("cToken", ctoken);
                 string myValue = HttpContext.Session.GetString("cToken");
                 return Content("Valid OTP");

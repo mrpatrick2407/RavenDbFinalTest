@@ -24,9 +24,11 @@
                         <img src="https://ok12static.oktacdn.com/fs/bco/1/fs055r3ijj5Xaoifk5d7" height="40" alt=" Logo" loading="lazy" />  
                   </a>                <!-- Left links -->                <!-- Left links -->   
                  </div>            <!-- Collapsible wrapper -->            <!-- Right elements -->     
-                 <div class="d-flex align-items-center">                <!-- Icon -->                <!-- Notifications -->              
-                     <button type="button" class="btn mx-2" style="border-radius:10px;background-color:#FF9201;"><h style="color:whitesmoke;">Logout</h></button>                 
-                     <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>          
+                 <div class="d-flex align-items-center">                <!-- Icon -->                <!-- Notifications -->
+                    <a asp-controller="Home" asp-action="Logout">
+                        <button type="button" class="btn mx-2" style="border-radius:10px;background-color:#FF9201;"><h style="color:whitesmoke;">Logout</h></button>
+                    </a>  
+                    <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>          
                      <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
                          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="55" alt="Black and White Portrait of a Man" loading="lazy" />             
                      </a>         
