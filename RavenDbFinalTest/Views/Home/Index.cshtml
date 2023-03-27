@@ -96,7 +96,28 @@ left:-20px;">
         var userotpval = userotp.value; var email = document.getElementById("email2");
         const error = document.getElementById('otp-error');
         var emailval = email.value;
-        $.ajax({
+        var xhr = new XMLHttpRequest();
+        var url = '/home/LoginAuth';
+        var params = 'email2=' + encodeURIComponent(emailval) + '&userotp=' + encodeURIComponent(userotpval);
+
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                if (xhr.responseText == "Invalid OTP") {
+                    error.innerText = "Please Enter Valid OTP";
+                } else {
+                    window.location.href = "https://localhost:7000/home/LoginAuth?email2=" + emailval;
+                }
+            } else {
+                console.log('Error: ' + xhr.status);
+            }
+        };
+
+        xhr.send(params);
+
+       /* $.ajax({
             url: '/home/LoginAuth',
             type: 'post',
             data: {
@@ -112,7 +133,7 @@ left:-20px;">
                     window.location.href = "https://localhost:7000/home/LoginAuth?email2="+emailval;
                 }                 
             }
-        });
+        });*/
     }
     </script>
 
