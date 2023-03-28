@@ -2,9 +2,10 @@ using Raven.Client.Documents;
 using System.Security.Cryptography.X509Certificates;
 using HotChocolate.AspNetCore;
 using RavenDbFinalTest.Graphql;
+using System.Runtime.InteropServices;
 
+var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
 
-var certificate = new X509Certificate2("ClientCertificate.pfx", "Theophilus");
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,9 +24,9 @@ builder.Services.AddSession(options =>
 builder.Services.AddSingleton<IDocumentStore>(provider =>
     new DocumentStore
     {
-        Urls = new[] { "https://a.theophilus.ravendb.community" },
+        Urls = new[] { "https://a.free.rmanojcei.ravendb.cloud" },
         Database = "TestEmployee",
-        Certificate = new X509Certificate2("ClientCertificate.pfx", "Theophilus")
+        Certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7")
     }.Initialize());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
