@@ -69,7 +69,6 @@ namespace RavenDbFinalTest.Controllers
             }
             return View(model);
         }
-        [HttpGet]
         public ActionResult Details(string Id)
         {
             String FormatedId = Id.Replace("%2F", "/");
