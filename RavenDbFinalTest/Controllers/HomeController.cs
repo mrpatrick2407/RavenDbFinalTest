@@ -354,6 +354,10 @@ namespace RavenDbFinalTest.Controllers
             
         }
 
+        public async Task<IActionResult> profile()
+        {
+            return View();
+        }
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("cToken");
