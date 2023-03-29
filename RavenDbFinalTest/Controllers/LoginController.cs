@@ -19,11 +19,11 @@ namespace RavenDbFinalTest.Controllers
         [HttpPost]
         public ActionResult CheckEmail(string emailAddress)
         {
-            var certificate = new X509Certificate2("ClientCertificate.pfx", "Theophilus");
+            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
 
             using (var store = new DocumentStore
             {
-                Urls = new[] { " https://a.theophilus.ravendb.community" },
+                Urls = new[] { " https://a.free.rmanojcei.ravendb.cloud/" },
                 Database = "TestEmployee",
                 Certificate = certificate
             })

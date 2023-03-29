@@ -2,7 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 
 
-var certificate = new X509Certificate2("ClientCertificate.pfx", "Theophilus");
+var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
 
 
 var builder = WebApplication.CreateBuilder(args);
