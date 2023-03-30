@@ -17,9 +17,10 @@ builder.Services
         .Create());
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(500);
+    options.IdleTimeout = TimeSpan.FromMinutes(500);
 });
 builder.Services.AddSingleton<IDocumentStore>(provider =>
     new DocumentStore

@@ -1,6 +1,7 @@
 ﻿@{
-    string rolemessage = ViewBag.name;
-    
+    HttpContextAccessor httpContextAccessor = new HttpContextAccessor();
+    string rolemessage = httpContextAccessor.HttpContext.Session.GetString("username");
+    string eid = httpContextAccessor.HttpContext.Session.GetString("usereid");
 }   
 <!DOCTYPE html>
 <html lang="en">
@@ -27,8 +28,8 @@
                     <a asp-controller="Home" asp-action="Logout">
                         <button type="button" class="btn mx-2" style="border-radius:10px;background-color:#FF9201;"><h style="color:whitesmoke;">Logout</h></button>
                     </a>  
-                    <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>          
-                     <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>
+                    <a class=" d-flex align-items-center " href="@Url.Action("Profile",new { id = eid })" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
                          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="55" alt="Black and White Portrait of a Man" loading="lazy" />             
                      </a>         
                   </div>            <!-- Right elements -->     

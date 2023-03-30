@@ -40,9 +40,26 @@ namespace RavenDbFinalTest.Graphql
                     return user;
                 }
             }
+        
         }
-        [GraphQLName("logactivity")]
-        public string log(string email) {
+
+       
+        [GraphQLName("getemployeebyid")]
+        public Profile2 GetEmployeebyid(int id)
+        {
+
+            using (var session = _documentStore.OpenSession())
+            {
+                
+                var user = session.Query<Profile2>(collectionName:"Profile2").FirstOrDefault(e => e.eid == id);
+                return user;
+            }
+
+        }
+
+
+            [GraphQLName("logactivity")]
+            public string log(string email) {
             
             using (var session= _documentStore.OpenSession())
             {

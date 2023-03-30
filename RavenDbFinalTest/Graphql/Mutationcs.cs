@@ -42,5 +42,20 @@ namespace RavenDbFinalTest.Graphql
             }
         }
 
+        public Profile2? profile( )
+        {
+            using (var session = store.OpenSession())
+            {
+                var profile2 = new Profile2
+                {
+                    FirstName = "Theophilus"
+
+                };
+                session.Store(profile2);
+                session.SaveChanges();
+                return profile2;
+            }
+        }
+
     }
 }

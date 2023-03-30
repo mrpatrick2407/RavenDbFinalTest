@@ -1,6 +1,9 @@
 ﻿@{
     string rolemessage = ViewBag.name;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    HttpContextAccessor httpContextAccessor= new HttpContextAccessor() ;
+    string username = httpContextAccessor.HttpContext.Session.GetString("username");
+    string eid = httpContextAccessor.HttpContext.Session.GetString("usereid");
 }   
 <body>
     <div class="d-flex justify-content-center bg-image" style="height:60vh;">
@@ -14,5 +17,6 @@
                 </h5></div><div><ul class="list-group list-group-light list-group-small"><li class="list-group-item px-4" style="background-color: #F8F1E7">April 4 , 2023 - Good Friday</li><br /><li class="list-group-item px-4" style="background-color: #ECECF2">April 4 , 2023 - Good Friday</li><br /><li class="list-group-item px-4" style="background-color: #F8F1E7">April 4 , 2023 - Good Friday</li></br><li class="list-group-item px-4" style="background-color: #ECECF2">April 4 , 2023 - Good Friday</li><br /><li class="list-group-item px-4" style="background-color: #F8F1E7">April 4 , 2023 - Good Friday</li><br /><br /><br /></ul></div></div><div class="card mx-lg-5" style="width: 30rem;"><div class="card-body"><h5 style="color: #151566">Events</h5></div><ul class="list-group list-group-light list-group-small"><li class="list-group-item px-4" style="background-color: #F8F1E7">April 4 , 2023 - Good Friday</li><br><li class="list-group-item px-4" style="background-color: #ECECF2">April 4 , 2023 - Good Friday</li><br><li class="list-group-item px-4" style="background-color: #F8F1E7">April 4 , 2023 - Good Friday</li><br /><li class="list-group-item px-4" style="background-color: #ECECF2">April 4 , 2023 - Good Friday</li><br /><li class="list-group-item px-4" style="background-color: #F8F1E7">April 4 , 2023 - Good Friday</li><br /><br /><br /></ul></div></div>
     <br />
     <br />
+    
     <div class="card"><div class="card-header">Block 3</div><div class="card-body"><blockquote class="blockquote mb-0"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p><footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer></blockquote><br /><br /><br /><br /></div></div>
 </body>

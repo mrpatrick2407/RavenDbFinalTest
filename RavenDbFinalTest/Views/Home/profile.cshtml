@@ -1,7 +1,8 @@
-﻿
+﻿@model dynamic
 @{
     ViewData["Title"] = "profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
+     
 }
 
 <div class="container-fluid">
@@ -16,7 +17,7 @@
                 </div>
 
                 <div class="position-absolute  start-50 translate-middle-x" style="top:130px;">
-                    <h3 class="text-center text-grey" style="background: linear-gradient(180deg, #000 37.5%, red 56.25%, #000);-webkit-background-clip: text;  -webkit-text-fill-color: transparent;text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);">Jack grey</h3>
+                    <h3 class="text-center text-grey" style="background: linear-gradient(180deg, #000 37.5%, red 56.25%, #000);-webkit-background-clip: text;  -webkit-text-fill-color: transparent;text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);">@Model.firstName</h3>
                  </div>
                 <div class="btn-primary position-absolute " style="right:90px;top:100px;border:1px solid rgba(0,0,0,0.25);border-radius:50%">
                     <button class="position-absolute bg-white btn-primary  rounded-circle " style="bottom:0px; border:0px solid rgb(0,0,0)">
@@ -24,7 +25,7 @@
                     </button>
                 </div>
             </div>
-            <p class=" text-center " style="position: absolute; top: 160px; left: 0; width: 100%; font-size: var(--font-size-lg); color: rgba(0, 0, 0, 0.59); display: inline-block;">Software developer</p>
+            <p class=" text-center " style="position: absolute; top: 160px; left: 0; width: 100%; font-size: var(--font-size-lg); color: rgba(0, 0, 0, 0.59); display: inline-block;">@Model.job_Title</p>
 
         </div>
         <div class="col-lg-8 col-md-12 col-lg-1 mb-1 position-relative" style="height: 43.3125rem; top:10px; left:5rem;">
@@ -43,41 +44,45 @@
                     <div class="col-md-6">
                         <div class="col-10 mb-4">
                             <label for="firstName" class="form-label fs-5  " >First Name</label>
-                            <input  type="text" class="form-control "style="height:40px;" id="firstName" readonly>
+                            <input value="@Model.firstName" type="text" class="form-control " style="height:40px;" id="firstName" readonly>
                         </div>
-                        <div class="col-10 mb-4">
-                            <label for="lastName" class="form-label fs-5">Last Name</label>
-                            <input type="text" class="form-control" style="height:40px;" id="lastName" readonly>
+                        <div class="mb-4 col-10 ">
+                            <label for="address" class="form-label fs-5">Address</label>
+                            <input value="@Model.address" type="text" class="form-control" style="height:40px;" id="address" readonly>
                         </div>
                         <div class="col-10 mb-4">
                             <label for="email" class="form-label fs-5">Email</label>
-                            <input type="email" class="form-control" style="height:40px;" id="email" readonly>
+                            <input value="@Model.email" type="email" class="form-control" style="height:40px;" id="email" readonly>
                         </div>
                         <div class="col-10 mb-4">
                             <label for="phone" class="form-label fs-5">Phone Number</label>
-                            <input type="tel" class="form-control" style="height:40px;" id="phone" readonly>
+                            <input value="@Model.phone_Number" type="tel" class="form-control" style="height:40px;" id="phone" >
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="mb-4 col-10 ">
-                            <label for="address" class="form-label fs-5">Address</label>
-                            <input type="text" class="form-control" style="height:40px;" id="address" readonly>
+                        <div class="col-10 mb-4">
+                            <label for="lastName" class="form-label fs-5">Last Name</label>
+                            <input value="@Model.lastName" type="text" class="form-control" style="height:40px;" id="lastName" readonly>
                         </div>
                         <div class="mb-4 col-10 ">
                             <label for="jobTitle" class="form-label fs-5">Job Title</label>
-                            <input type="text" class="form-control" style="height:40px;" id="jobTitle" readonly>
+                            <input value="@Model.job_Title" type="text" class="form-control" style="height:40px;" id="jobTitle" readonly>
                         </div>
                         <div class="mb-4 col-10 ">
                             <label for="department" class="form-label fs-5">Department</label>
-                            <input type="text" class="form-control" style="height:40px;" id="department" readonly>
+                            <input value="@Model.department" type="text" class="form-control" style="height:40px;" id="department" readonly>
                         </div>
                         <div class="mb-4 col-10 ">
                             <label for="manager" class="form-label fs-5">Manager</label>
-                            <input type="text" class="form-control" style="height:40px;" id="manager" readonly>
+                            <input value="@Model.manager" type="text" class="form-control" style="height:40px;" id="manager" readonly>
                         </div>
                         
                     </div>
-                    <button type="button" class="btn btn-primary w-25 ms-3 mt-4" style="background-color: #151566; ">Request to Update</button>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button" id="edit-button">Edit</button>
+                    </div>
+                    <button type="button" class="btn btn-primary w-25 ms-2 mt-1" style="background-color: #151566; ">Request to Update</button>
+                    
                 </div>
             </div>
         </div>

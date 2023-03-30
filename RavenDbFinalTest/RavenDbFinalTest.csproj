@@ -7,22 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\Home\mathew.jpg" />
-    <None Remove="Views\Home\photo-camera.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Views\Home\mathew.jpg">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Views\Home\photo-camera.png">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="GraphQL" Version="7.3.0" />
     <PackageReference Include="GraphQL.Client" Version="5.1.1" />
     <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft" Version="5.1.1" />

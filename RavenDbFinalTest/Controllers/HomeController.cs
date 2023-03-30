@@ -165,15 +165,22 @@ namespace RavenDbFinalTest.Controllers
                   emailId
                   role
                   name
+                eid
                   }
                 }",
                     Variables = new { email = email2 }
                 };
                 var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
                 var user = res.Data.getemployee;
-                
+            
+                string username = user.name;
+                string usereid = user.eid;
+                string emailid=user.emailId;
+                HttpContext.Session.SetString("username", username);
+                HttpContext.Session.SetString("usereid", usereid);
+                HttpContext.Session.SetString("useremailid", emailid);
 
-                if (user.role == "Admin")
+            if (user.role == "Admin")
                 {
                     ViewBag.RoleMessage = $"{user.Name}, You are Admin";
                 }else if (user.role == "Employee")
@@ -316,36 +323,39 @@ namespace RavenDbFinalTest.Controllers
             }
         }
     */
+       
         public async Task<IActionResult> LoginAuth(string email2)
         {   
             try
             {
 
-                string Token = HttpContext.Session.GetString("cToken");
-                if (Token != null)
-                {
-                    var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-                    var graphqlreq = new GraphQLRequest
+                    string Token = HttpContext.Session.GetString("cToken");
+                    string useremail= HttpContext.Session.GetString("useremailid");
+                    if(Token!=null && useremail==email2)
                     {
-                        Query = @"query example($email:String!){
-                  getemployee(email: $email) {
-                  emailId
-                  role
-                  name
-                  }
-                }",
-                        Variables = new { email = email2 }
-                    };
-                    var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
-                    var user = res.Data.getemployee;
-                    ViewBag.name = user.name;
-                    return View();
-                }
+                        var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                        var graphqlreq = new GraphQLRequest
+                        {
+                            Query = @"query example($email:String!){
+                              getemployee(email: $email) {
+                              emailId
+                              role
+                              name
+                              eid
+                              }
+                            }",
+                            Variables = new { email = email2 }
+                        };
+                        var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                        var user = res.Data.getemployee;
+                        
+                        return View();
+                    }
                 else
                 {
-                    return Redirect("Index");
+                    return View("Error");
                 }
-
+                
             }catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
@@ -354,9 +364,41 @@ namespace RavenDbFinalTest.Controllers
             
         }
 
-        public async Task<IActionResult> profile()
+        public async Task<IActionResult> profile(string id)
         {
-            return View();
+            int eid = Int16.Parse(id);
+            Console.WriteLine(eid);
+            int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
+            if (usereid==eid)
+            {
+                Console.WriteLine("From profile inside");
+                var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                var graphqlreq = new GraphQLRequest
+                {
+                    Query = @"query exaple($id:Int!){
+                 getemployeebyid(id: $id) {
+                   firstName
+                   lastName
+                   phone_Number
+                   address
+                   job_Title
+                   manager
+                   department
+                   email
+                 }
+                }",
+                    Variables = new { id = eid }
+                };
+                var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                var user = req.Data.getemployeebyid;
+                     
+                return View(user);
+            }
+            else
+            {
+                return View("Error");
+            }
+            
         }
         public IActionResult Logout()
         {
