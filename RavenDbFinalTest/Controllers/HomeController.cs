@@ -385,13 +385,13 @@ namespace RavenDbFinalTest.Controllers
                    manager
                    department
                    email
+                   id
                  }
                 }",
                     Variables = new { id = eid }
                 };
                 var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
                 var user = req.Data.getemployeebyid;
-                     
                 return View(user);
             }
             else
