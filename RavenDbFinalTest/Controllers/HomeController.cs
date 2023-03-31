@@ -401,7 +401,7 @@ namespace RavenDbFinalTest.Controllers
         }
 
 
-/*
+
         public async Task<IActionResult> GetImage(string id)
         {
             int oid = Int16.Parse(id);
@@ -421,12 +421,16 @@ namespace RavenDbFinalTest.Controllers
             var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
             var user = req.Data.getimage;
             Console.WriteLine(user.firstName);
-            Console.WriteLine("This is from getprofile"+user.imageBase64+"userid:"+user.id);
+            Console.WriteLine(user.imageBase64.GetType().Name);
+
+            Console.WriteLine("This is from getprofile userid:"+user.id);
             if (user.imageBase64 != null)
             {
-                var imageData = Convert.FromBase64String(user.imageBase64);
+                string imageDataString = user.imageBase64.ToString(); // Convert to string
+                var imageData = Convert.FromBase64String(imageDataString);
                 var stream = new MemoryStream(imageData);
                 return new FileStreamResult(stream, "image/jpeg");
+
             }
             else
             {
@@ -435,7 +439,7 @@ namespace RavenDbFinalTest.Controllers
 
         }
         //This is to getimage
-*/
+
         /*  public IActionResult GetImage()
           {
               var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
@@ -471,6 +475,23 @@ namespace RavenDbFinalTest.Controllers
           }
         */
 
+
+        /*
+         string imageDataString = user.imageBase64.ToString(); // Convert to string
+                var imageData = Convert.FromBase64String(imageDataString);
+
+                // Save the image to a file
+                using (var fileStream = new FileStream("test.jpg", FileMode.Create, FileAccess.Write))
+                {
+                    await fileStream.WriteAsync(imageData, 0, imageData.Length);
+                }
+
+                // Return the image as a FileStreamResult
+                var fileStreamResult = new FileStreamResult(new MemoryStream(imageData), "image/jpeg");
+                fileStreamResult.FileDownloadName = "test.jpg";
+                return fileStreamResult;
+         
+         */
 
         public IActionResult Logout()
         {
