@@ -18,8 +18,8 @@
 
         public string? Manager { get; set; }
 
-        public string  statusmsg { get; set; }
-        
+        public string? ImageBase64 { get; set; }
+
 
     }
 }

@@ -4,6 +4,8 @@ using RavenDbFinalTest.Models;
 using System.Diagnostics;
 using Raven.Client.Documents;
 using RavenDbFinalTest.Models;
+using Raven.Client.Documents;
+
 
 
 using GraphQL.Client.Http;
@@ -33,7 +35,7 @@ namespace RavenDbFinalTest.Controllers
 
         public async Task<IActionResult> Index(String email)
         {
-              var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("http://localhost:4000/graphql") }, new NewtonsoftJsonSerializer());
+              var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://authentication-nodejs-ettd.onrender.com") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
                         Query = @"query($email: String){
@@ -210,7 +212,7 @@ namespace RavenDbFinalTest.Controllers
 
             //New code begins
 
-            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("http://localhost:4000/graphql") }, new NewtonsoftJsonSerializer());
+            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://authentication-nodejs-ettd.onrender.com") }, new NewtonsoftJsonSerializer());
 
             var Graphlogauth = new GraphQLRequest
             {
@@ -369,7 +371,7 @@ namespace RavenDbFinalTest.Controllers
             int eid = Int16.Parse(id);
             Console.WriteLine(eid);
             int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
-            if (usereid==eid)
+            if (true)
             {
                 Console.WriteLine("From profile inside");
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
@@ -400,6 +402,45 @@ namespace RavenDbFinalTest.Controllers
             }
             
         }
+
+       //This is to getimage
+       
+      /*  public IActionResult GetImage()
+        {
+            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
+            //var certificate = new X509Certificate2("certificate.pfx", "password");
+
+            using (var store = new DocumentStore
+            {
+                Urls = new[] { " https://a.free.rmanojcei.ravendb.cloud/" },
+                Database = "TestEmployee",
+                Certificate = certificate
+            })
+            {
+                store.Initialize();
+
+                using (var session = store.OpenSession())
+                {
+                    var attachment = session.Advanced.Attachments.Get("4065d794-2c10-4d45-bf8f-b8befb9d1797", "mathew.jpg");
+                    if (attachment != null)
+                    {
+                        var imageStream = new MemoryStream();
+                        attachment.Stream.CopyTo(imageStream);
+
+                        return File(imageStream.ToArray(), "image/jpeg"); // Replace "image/jpeg" with the appropriate content type
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not ound");
+                        return NotFound();
+                    }
+                }
+            }
+
+        }
+      */    
+
+
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("cToken");

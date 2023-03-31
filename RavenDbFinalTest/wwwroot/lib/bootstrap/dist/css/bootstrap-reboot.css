@@ -398,7 +398,8 @@ legend + * {
   font: inherit;
 }
 
-::-webkit-file-upload-button {
+::-webkit-file-
+-button {
   font: inherit;
   -webkit-appearance: button;
 }

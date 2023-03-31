@@ -2,6 +2,8 @@
 using RavenDbFinalTest.Models;
 using Microsoft.AspNetCore.Mvc;
 using RavenDbFinalTest.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace RavenDbFinalTest.Graphql
 {
     public class QueryResolver
@@ -42,8 +44,29 @@ namespace RavenDbFinalTest.Graphql
             }
         
         }
+        [GraphQLName("getimage")]
+        public Profile2 getimage(int id)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var user = session.Query<Profile2>(collectionName: "Profile2").FirstOrDefault(e => e.eid == id);
+                return user;
+                if (user != null)
+                {
+                    var attachment = session.Advanced.Attachments.Get(user.Id, "profileImage.jpg");
+                    if (attachment != null)
+                    {
+                        var imageStream = new MemoryStream();
+                        attachment.Stream.CopyTo(imageStream);
+                        user.ImageBase64 = Convert.ToBase64String(imageStream.ToArray());
+                    }
+                }
+                
+            }
+        }
 
-       
+
+
         [GraphQLName("getemployeebyid")]
         public Profile2 GetEmployeebyid(int id)
         {
@@ -58,44 +81,47 @@ namespace RavenDbFinalTest.Graphql
         }
 
 
+       
+
+
             [GraphQLName("logactivity")]
             public string log(string email) {
             
-            using (var session= _documentStore.OpenSession())
-            {
+                    using (var session= _documentStore.OpenSession())
+                    {
                 
 
-                var user = session.Query<Company>().FirstOrDefault(e=>e.EmailId==email);
-                if (user == null)
-                {
-                    return "error";
-                }
-                else
-                {
-                    try
-                    {
-                        var login = new Login()
+                        var user = session.Query<Company>().FirstOrDefault(e=>e.EmailId==email);
+                        if (user == null)
                         {
-                            EmailAddress = email,
-                            LoginTime = DateTime.UtcNow,
+                            return "error";
+                        }
+                        else
+                        {
+                            try
+                            {
+                                var login = new Login()
+                                {
+                                    EmailAddress = email,
+                                    LoginTime = DateTime.UtcNow,
                             
 
-                        };
-                        session.Store(login, login.Id);
-                        session.SaveChanges();
-                        return "savedchanges";
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                        return "errorfromcacth";
-                    }
-                }
+                                };
+                                session.Store(login, login.Id);
+                                session.SaveChanges();
+                                return "savedchanges";
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                return "errorfromcacth";
+                            }
+                        }
                 
-            }
+                    }
             
            
-        }
+            }
 
     }
 
