@@ -50,10 +50,10 @@ namespace RavenDbFinalTest.Graphql
             using (var session = _documentStore.OpenSession())
             {
                 var user = session.Query<Profile2>(collectionName: "Profile2").FirstOrDefault(e => e.eid == id);
-                return user;
+                
                 if (user != null)
                 {
-                    var attachment = session.Advanced.Attachments.Get(user.Id, "profileImage.jpg");
+                    var attachment = session.Advanced.Attachments.Get(user.Id, "mathew.jpg");
                     if (attachment != null)
                     {
                         var imageStream = new MemoryStream();
@@ -61,7 +61,7 @@ namespace RavenDbFinalTest.Graphql
                         user.ImageBase64 = Convert.ToBase64String(imageStream.ToArray());
                     }
                 }
-                
+                return user;
             }
         }
 

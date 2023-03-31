@@ -11,6 +11,7 @@ using Raven.Client.Documents;
 using GraphQL.Client.Http;
 using GraphQL;
 using GraphQL.Client.Serializer.Newtonsoft;
+using System.Security.Cryptography;
 
 
 namespace RavenDbFinalTest.Controllers
@@ -203,7 +204,6 @@ namespace RavenDbFinalTest.Controllers
                     };
                     var logres =await client2.SendQueryAsync<dynamic>(loginactivity);
                     var reponse = logres.Data.savelogin;
-                    Console.WriteLine(reponse);
 
                
                    
@@ -223,7 +223,6 @@ namespace RavenDbFinalTest.Controllers
             };
             var logauthres = await client.SendQueryAsync<dynamic>(Graphlogauth);
             string ctoken = logauthres.Data.cred;
-            Console.WriteLine($"{ctoken}");
             if(ctoken == "Invalid OTP")
             {
                 Console.WriteLine("If");
@@ -369,11 +368,9 @@ namespace RavenDbFinalTest.Controllers
         public async Task<IActionResult> profile(string id)
         {
             int eid = Int16.Parse(id);
-            Console.WriteLine(eid);
-            int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
+           // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
             if (true)
             {
-                Console.WriteLine("From profile inside");
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -403,42 +400,76 @@ namespace RavenDbFinalTest.Controllers
             
         }
 
-       //This is to getimage
-       
-      /*  public IActionResult GetImage()
+
+
+        public async Task<IActionResult> GetImage(string id)
         {
-            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
-            //var certificate = new X509Certificate2("certificate.pfx", "password");
-
-            using (var store = new DocumentStore
+            int oid = Int16.Parse(id);
+            Console.WriteLine("this is oid" + oid + "eid:" + id);
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
             {
-                Urls = new[] { " https://a.free.rmanojcei.ravendb.cloud/" },
-                Database = "TestEmployee",
-                Certificate = certificate
-            })
+                Query = @"query example($id:Int!){
+                  getimage(id: $id) {
+                    firstName
+                    imageBase64
+                    id
+                  }
+                }",
+                Variables = new { id = oid }
+            };
+            var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            var user = req.Data.getimage;
+            Console.WriteLine(user.firstName);
+            Console.WriteLine("This is from getprofile"+user.imageBase64+"userid:"+user.id);
+            if (user.imageBase64 != null)
             {
-                store.Initialize();
-
-                using (var session = store.OpenSession())
-                {
-                    var attachment = session.Advanced.Attachments.Get("4065d794-2c10-4d45-bf8f-b8befb9d1797", "mathew.jpg");
-                    if (attachment != null)
-                    {
-                        var imageStream = new MemoryStream();
-                        attachment.Stream.CopyTo(imageStream);
-
-                        return File(imageStream.ToArray(), "image/jpeg"); // Replace "image/jpeg" with the appropriate content type
-                    }
-                    else
-                    {
-                        Console.WriteLine("Not ound");
-                        return NotFound();
-                    }
-                }
+                var imageData = Convert.FromBase64String(user.imageBase64);
+                var stream = new MemoryStream(imageData);
+                return new FileStreamResult(stream, "image/jpeg");
+            }
+            else
+            {
+                return NotFound();
             }
 
         }
-      */    
+        //This is to getimage
+
+        /*  public IActionResult GetImage()
+          {
+              var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
+              //var certificate = new X509Certificate2("certificate.pfx", "password");
+
+              using (var store = new DocumentStore
+              {
+                  Urls = new[] { " https://a.free.rmanojcei.ravendb.cloud/" },
+                  Database = "TestEmployee",
+                  Certificate = certificate
+              })
+              {
+                  store.Initialize();
+
+                  using (var session = store.OpenSession())
+                  {
+                      var attachment = session.Advanced.Attachments.Get("4065d794-2c10-4d45-bf8f-b8befb9d1797", "mathew.jpg");
+                      if (attachment != null)
+                      {
+                          var imageStream = new MemoryStream();
+                          attachment.Stream.CopyTo(imageStream);
+
+                          return File(imageStream.ToArray(), "image/jpeg"); // Replace "image/jpeg" with the appropriate content type
+                      }
+                      else
+                      {
+                          Console.WriteLine("Not ound");
+                          return NotFound();
+                      }
+                  }
+              }
+
+          }
+        */
 
 
         public IActionResult Logout()
