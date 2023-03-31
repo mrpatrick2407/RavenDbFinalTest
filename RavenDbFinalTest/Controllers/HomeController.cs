@@ -401,7 +401,7 @@ namespace RavenDbFinalTest.Controllers
         }
 
 
-
+/*
         public async Task<IActionResult> GetImage(string id)
         {
             int oid = Int16.Parse(id);
@@ -435,7 +435,7 @@ namespace RavenDbFinalTest.Controllers
 
         }
         //This is to getimage
-
+*/
         /*  public IActionResult GetImage()
           {
               var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
