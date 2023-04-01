@@ -368,8 +368,8 @@ namespace RavenDbFinalTest.Controllers
         public async Task<IActionResult> profile(string id)
         {
             int eid = Int16.Parse(id);
-           // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
-            if (true)
+           int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
+            if (eid==usereid)
             {
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
