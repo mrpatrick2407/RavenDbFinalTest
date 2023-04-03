@@ -12,7 +12,7 @@ using GraphQL.Client.Http;
 using GraphQL;
 using GraphQL.Client.Serializer.Newtonsoft;
 using System.Security.Cryptography;
-
+using GraphQL.Validation;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -21,7 +21,7 @@ namespace RavenDbFinalTest.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
         private readonly string _baseURL = "http://localhost:5000";
-
+        public int globaleid;
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -179,6 +179,8 @@ namespace RavenDbFinalTest.Controllers
                 string username = user.name;
                 string usereid = user.eid;
                 string emailid=user.emailId;
+            globaleid = user.eid;
+            Console.WriteLine(globaleid);
                 HttpContext.Session.SetString("username", username);
                 HttpContext.Session.SetString("usereid", usereid);
                 HttpContext.Session.SetString("useremailid", emailid);
@@ -365,12 +367,16 @@ namespace RavenDbFinalTest.Controllers
             
         }
 
-        public async Task<IActionResult> profile(string id)
+        public async Task<IActionResult> profile(string id,bool success= false)
         {
             int eid = Int16.Parse(id);
-           int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
-            if (eid==usereid)
+          // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
+            if (true)
             {
+                if (success)
+                {
+                    ViewBag.successmessage = "Form data successfully updated!";
+                }
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -400,7 +406,41 @@ namespace RavenDbFinalTest.Controllers
             
         }
 
+        [HttpPost]
+        public async Task<ActionResult> Edit(Profile2 model)
+        {
+            Console.WriteLine("Hi here"+model.FirstName);
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions
+            { EndPoint = new Uri("https://localhost:7000/graphql") },
+            new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"mutation example($test:Profile2Input!){
+                  editdata (data: $test){
+                    firstName
+                  }
+                }",
+                Variables = new
+                {
+                    test = new
+                    {
+                        model.FirstName,
+                        model.LastName,
+                        model.Department,
+                        model.Manager,
+                        model.Job_Title,
+                        model.Email,
+                        model.Address,
+                        model.Phone_Number
 
+
+                    }
+                }
+            };
+            Console.WriteLine("Before");
+            await client2.SendQueryAsync<dynamic>(graphqlreq);
+            return RedirectToAction("Profile", new { id = globaleid, success = true });
+        }
 
         public async Task<IActionResult> GetImage(string id)
         {
@@ -426,7 +466,8 @@ namespace RavenDbFinalTest.Controllers
             Console.WriteLine("This is from getprofile userid:"+user.id);
             if (user.imageBase64 != null)
             {
-                string imageDataString = user.imageBase64.ToString(); // Convert to string
+                 // Convert to string
+                 var imageDataString=Convert.ToBase64String(user.imageBase64);
                 var imageData = Convert.FromBase64String(imageDataString);
                 var stream = new MemoryStream(imageData);
                 return new FileStreamResult(stream, "image/jpeg");

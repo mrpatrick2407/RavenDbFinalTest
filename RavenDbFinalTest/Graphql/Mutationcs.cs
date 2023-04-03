@@ -42,19 +42,29 @@ namespace RavenDbFinalTest.Graphql
             }
         }
 
-        public Profile2? profile( )
+        [GraphQLName("editdata")]
+        public AdminRequest? editEmployee(Profile2 data)
         {
+
             using (var session = store.OpenSession())
             {
-                var profile2 = new Profile2
+                var Employee = new AdminRequest
                 {
-                    FirstName = "Theophilus"
-
+                    
+                    FirstName=data.FirstName,
+                    LastName=data.LastName,
+                    Department=data.Department,
+                    Manager=data.Manager,
+                    Job_Title=data.Job_Title,
+                    Phone_Number=data.Phone_Number,
+                    Email=data.Email,
+                    Address=data.Address
                 };
-                session.Store(profile2);
+                session.Store(Employee);
                 session.SaveChanges();
-                return profile2;
+                return Employee;
             }
+
         }
 
     }
