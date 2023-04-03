@@ -6,6 +6,7 @@
     string eid = httpContextAccessor.HttpContext.Session.GetString("usereid");
 }
 
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 col-lg-3 mb-1 position-relative" style="top:220px;height: 219px;left:80px;">
@@ -57,7 +58,7 @@
                         </div>
                         <div class="col-10 mb-4">
                             <label for="phone" class="form-label fs-5">Phone Number</label>
-                            <input value="@Model.phone_Number" type="tel" class="form-control" style="height:40px;" id="phone" >
+                            <input value="@Model.phone_Number" type="tel" class="form-control" style="height:40px;" id="phone" readonly >
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -80,7 +81,7 @@
                         
                     </div>
                     <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" id="edit-button">Edit</button>
+                        <button class="btn btn-secondary w-auto" type="button" id="edit-button">Edit</button>
                     </div>
                     <button type="button" class="btn btn-primary w-25 ms-2 mt-1" style="background-color: #151566; ">Request to Update</button>
                     
@@ -89,3 +90,42 @@
         </div>
     </div>
 </div>
+
+<style>
+    input[readonly] {
+        background-color: #f9f9f9; /* Grey out readonly fields */
+        cursor: not-allowed; /* Change cursor on readonly fields */
+    }
+
+    input {
+        border: 1px solid #ced4da; /* Add border to all fields */
+        border-radius: 4px; /* Round the corners of all fields */
+        padding: 5px; /* Add some padding to all fields */
+    }
+
+        input:not([readonly]):focus {
+            border-color: #151566; /* Highlight focused fields */
+            box-shadow: 0 0 5px rgba(21, 21, 102, 0.5),
+            0 0 10px rgba(21, 21, 102, 0.5),
+            0 0 25px rgba(21, 21, 102, 0.5);
+           
+        }
+</style>
+
+
+<script>
+    const editButton = document.getElementById("edit-button");
+    const inputFields = document.querySelectorAll("input:not(#email):not(#firstName):not(#lastName)");
+
+    editButton.addEventListener("click", () => {
+        inputFields.forEach((input) => {
+            if(editButton.textContent==="Edit"){
+                editButton.textContent="Cancel";
+            }else{
+                editButton.textContent="Edit";
+            }
+            input.readOnly = !input.readOnly;
+        });
+    });
+</script>
+
