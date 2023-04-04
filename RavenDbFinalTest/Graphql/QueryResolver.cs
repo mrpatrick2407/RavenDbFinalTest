@@ -53,7 +53,7 @@ namespace RavenDbFinalTest.Graphql
                 
                 if (user != null)
                 {
-                    var attachment = session.Advanced.Attachments.Get(user.Id, "profile.jpg");
+                    var attachment = session.Advanced.Attachments.Get(user.Id, "Profile.jpg");
                     if (attachment != null)
                     {
                         var imageStream = new MemoryStream();

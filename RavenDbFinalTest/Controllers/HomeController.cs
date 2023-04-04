@@ -13,6 +13,8 @@ using GraphQL;
 using GraphQL.Client.Serializer.Newtonsoft;
 using System.Security.Cryptography;
 using GraphQL.Validation;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.SignalR;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -179,7 +181,8 @@ namespace RavenDbFinalTest.Controllers
                 string username = user.name;
                 string usereid = user.eid;
                 string emailid=user.emailId;
-            globaleid = user.eid;
+            globaleid = Int16.Parse(usereid);
+ 
             Console.WriteLine("This is global"+globaleid);
                 HttpContext.Session.SetString("username", username);
                 HttpContext.Session.SetString("usereid", usereid);
@@ -326,12 +329,80 @@ namespace RavenDbFinalTest.Controllers
             }
         }
     */
-       
+        [HttpPost]
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile imageFile)
+        {
+
+
+            //graphqlquery
+            int eid = Int16.Parse(HttpContext.Session.GetString("usereid"));
+
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query exaple($id:Int!){
+                 getemployeebyid(id: $id) {
+                   id
+                 }
+                }",
+                Variables = new { id = eid }
+            };
+            var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            var user = req.Data.getemployeebyid;
+            Console.WriteLine($"Upload Image:{user.id}");
+            string userid = user.id.ToString();
+            Console.WriteLine("User id type"+userid.GetType().Name+"userid "+userid);
+
+
+            Console.WriteLine("function called");
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                Console.WriteLine("if called");
+                return BadRequest("Please select an image file to upload.");
+
+            }
+           // Read the image data into a byte array
+            byte[] imageData;
+            using (var stream = new MemoryStream())
+            {
+                await imageFile.CopyToAsync(stream);
+                imageData = stream.ToArray();
+            }
+            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
+            using (var store = new DocumentStore
+            {
+                Urls = new[] { "https://a.free.rmanojcei.ravendb.cloud/" },
+                Database = "TestEmployee",
+                Certificate = certificate
+            })
+            {
+                store.Initialize();
+                using (var session = store.OpenSession())
+                {
+                        
+                    using (var stream = imageFile.OpenReadStream())
+                    {
+                        
+                        Console.WriteLine("else called");
+                        stream.Position = 0;
+                        session.Advanced.Attachments.Store(userid, "Profile.jpg", stream, imageFile.ContentType);
+                        session.SaveChanges();
+                    }
+                    ViewBag.StatusMessage = "Image uploaded successfully!";
+                   
+                    return View();
+
+                }
+
+
+
+
+            }
+        }
         public async Task<IActionResult> LoginAuth(string email2)
         {   
             try
             {
-
                     string Token = HttpContext.Session.GetString("cToken");
                     string useremail= HttpContext.Session.GetString("useremailid");
                     if(Token!=null && useremail==email2)
@@ -373,8 +444,9 @@ namespace RavenDbFinalTest.Controllers
           // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
             if (true)
             {
-                
-                    var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                Console.WriteLine("This is from get req" + globaleid);
+
+                var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                     var request = new GraphQLRequest
                     {
                         Query = @"query example($id:Int!){
