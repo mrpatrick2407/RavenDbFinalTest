@@ -2,6 +2,8 @@
     HttpContextAccessor httpContextAccessor = new HttpContextAccessor();
     string rolemessage = httpContextAccessor.HttpContext.Session.GetString("username");
     string eid = httpContextAccessor.HttpContext.Session.GetString("usereid");
+    string email = httpContextAccessor.HttpContext.Session.GetString("useremailid");
+
 }   
 <!DOCTYPE html>
 <html lang="en">
@@ -19,9 +21,9 @@
                 <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">       
                     <i class="fas fa-bars"></i>           
                 </button>            <!-- Collapsible wrapper -->    
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">        
-                   <a class="navbar-brand mt-2 mt-lg-0 mx-5" href="#">       
-                        <img src=" @Url.Action("GetImage", new { id = eid })" height="40" alt=" Logo" loading="lazy" />  
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <a class="navbar-brand mt-2 mt-lg-0 mx-5" href="LoginAuth?email2=@email">
+                        <img src="https://ok12static.oktacdn.com/fs/bco/1/fs055r3ijj5Xaoifk5d7" height="40" alt=" Logo" loading="lazy" />  
                   </a>                <!-- Left links -->                <!-- Left links -->   
                  </div>            <!-- Collapsible wrapper -->            <!-- Right elements -->     
                  <div class="d-flex align-items-center">                <!-- Icon -->                <!-- Notifications -->
@@ -30,8 +32,8 @@
                     </a>  
                     <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>
                     <a class=" d-flex align-items-center " href="@Url.Action("Profile",new { id = eid })" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                         <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="55" alt="Black and White Portrait of a Man" loading="lazy" />             
-                     </a>         
+                        <img src=" @Url.Action("GetImage", new { id = eid })" style="border-radius:50%;" class="" height="55" alt="Black and White Portrait of a Man" loading="lazy" />
+                    </a>         
                   </div>            <!-- Right elements -->     
             
                   </div>        <!-- Container wrapper -->  
