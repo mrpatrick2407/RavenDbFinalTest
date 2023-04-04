@@ -81,7 +81,19 @@ namespace RavenDbFinalTest.Graphql
         }
 
 
-       
+        [GraphQLName("getadminreq")]
+        public bool getadminreq(int id)
+        {
+            using(var session = _documentStore.OpenSession())
+            {
+                var user = session.Query<AdminRequest>(collectionName: "AdminRequests").FirstOrDefault(e => e.eid == id);
+                if(user != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
 
        
 

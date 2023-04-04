@@ -367,25 +367,29 @@ namespace RavenDbFinalTest.Controllers
             
         }
 
-        public async Task<IActionResult> profile(string id,bool success= false)
+        public async Task<IActionResult> profile(string id)
         {
             int eid = Int16.Parse(id);
           // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
             if (true)
             {
-                if (success)
-                {
-                    ViewBag.successmessage = "Form data successfully updated!";
-                }
-                else
-                {
-                    /*var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-                    var req = new GraphQLRequest
+                
+                    var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                    var request = new GraphQLRequest
                     {
-                        Query = @"query",
-                        Variables = new { eid = eid }
-                    }*/
-                }
+                        Query = @"query example($id:Int!){
+                          getadminreq(id: $id) 
+                        }",
+                        Variables = new { id = eid }
+                    };
+                    var response=await client.SendQueryAsync<dynamic>(request);
+                    bool requestsexist=response.Data.getadminreq;
+                    Console.WriteLine("Idhu vandhu inga request"+requestsexist);
+                    if (requestsexist)
+                    {
+                        ViewBag.successmessage = "Requested!";
+                    }
+                
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -452,7 +456,7 @@ namespace RavenDbFinalTest.Controllers
             };
             Console.WriteLine("Before");
             await client2.SendQueryAsync<dynamic>(graphqlreq);
-            return RedirectToAction("Profile", new { id = eid, success = true });
+            return RedirectToAction("Profile", new { id = eid });
         }
 
         public async Task<IActionResult> GetImage(string id)
