@@ -379,7 +379,12 @@ namespace RavenDbFinalTest.Controllers
                 }
                 else
                 {
-
+                    /*var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                    var req = new GraphQLRequest
+                    {
+                        Query = @"query",
+                        Variables = new { eid = eid }
+                    }*/
                 }
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
@@ -414,6 +419,9 @@ namespace RavenDbFinalTest.Controllers
         public async Task<ActionResult> Edit(Profile2 model)
         {
             string eid = HttpContext.Session.GetString("usereid");
+            int eid2 = Int16.Parse(eid);
+            model.eid = eid2;
+            Console.WriteLine("Eid from EDit" + eid);
             var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions
             { EndPoint = new Uri("https://localhost:7000/graphql") },
             new NewtonsoftJsonSerializer());
@@ -428,7 +436,7 @@ namespace RavenDbFinalTest.Controllers
                 {
                     test = new
                     {   
-                        eid,
+                        model.eid,
                         model.FirstName,
                         model.LastName,
                         model.Department,
@@ -467,13 +475,10 @@ namespace RavenDbFinalTest.Controllers
             var user = req.Data.getimage;
             Console.WriteLine(user.firstName);
             Console.WriteLine(user.imageBase64.GetType().Name);
-
-            Console.WriteLine("This is from getprofile userid:"+user.id);
             if (user.imageBase64 != null)
             {
-                 // Convert to string
-                 var imageDataString=Convert.ToBase64String(user.imageBase64);
-                var imageData = Convert.FromBase64String(imageDataString);
+                // Convert to string
+                var imageData = Convert.FromBase64String(user.imageBase64.ToString());
                 var stream = new MemoryStream(imageData);
                 return new FileStreamResult(stream, "image/jpeg");
 
