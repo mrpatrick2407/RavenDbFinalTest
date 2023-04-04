@@ -50,7 +50,7 @@ namespace RavenDbFinalTest.Graphql
             {
                 var Employee = new AdminRequest
                 {
-                    
+                    eid = data.eid,
                     FirstName=data.FirstName,
                     LastName=data.LastName,
                     Department=data.Department,

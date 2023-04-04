@@ -180,7 +180,7 @@ namespace RavenDbFinalTest.Controllers
                 string usereid = user.eid;
                 string emailid=user.emailId;
             globaleid = user.eid;
-            Console.WriteLine(globaleid);
+            Console.WriteLine("This is global"+globaleid);
                 HttpContext.Session.SetString("username", username);
                 HttpContext.Session.SetString("usereid", usereid);
                 HttpContext.Session.SetString("useremailid", emailid);
@@ -377,6 +377,10 @@ namespace RavenDbFinalTest.Controllers
                 {
                     ViewBag.successmessage = "Form data successfully updated!";
                 }
+                else
+                {
+
+                }
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -409,7 +413,7 @@ namespace RavenDbFinalTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(Profile2 model)
         {
-            Console.WriteLine("Hi here"+model.FirstName);
+            string eid = HttpContext.Session.GetString("usereid");
             var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions
             { EndPoint = new Uri("https://localhost:7000/graphql") },
             new NewtonsoftJsonSerializer());
@@ -423,7 +427,8 @@ namespace RavenDbFinalTest.Controllers
                 Variables = new
                 {
                     test = new
-                    {
+                    {   
+                        eid,
                         model.FirstName,
                         model.LastName,
                         model.Department,
@@ -439,7 +444,7 @@ namespace RavenDbFinalTest.Controllers
             };
             Console.WriteLine("Before");
             await client2.SendQueryAsync<dynamic>(graphqlreq);
-            return RedirectToAction("Profile", new { id = globaleid, success = true });
+            return RedirectToAction("Profile", new { id = eid, success = true });
         }
 
         public async Task<IActionResult> GetImage(string id)
