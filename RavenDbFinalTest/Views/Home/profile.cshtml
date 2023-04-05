@@ -5,34 +5,92 @@
     HttpContextAccessor httpContextAccessor = new HttpContextAccessor();
     string eid = httpContextAccessor.HttpContext.Session.GetString("usereid");
 }
+<head>
+    <style>
+        .crop-container {
+            position: relative;
+        }
 
+
+        .preview-container {
+            position: fixed;
+            top: 150px;
+            left: 30px;
+            width: 30%;
+            height: 20%;
+            display: none;
+            border: 2px solid red;
+        }
+
+        #preview {
+            width: 300px;
+            height: 300px;
+            border: 2px solid black;
+        }
+
+        .preview-container.show {
+            display: inline;
+        }
+
+        input[readonly] {
+            background-color: #f9f9f9; /* Grey out readonly fields */
+            cursor: not-allowed; /* Change cursor on readonly fields */
+        }
+
+        input {
+            border: 1px solid #fff; /* Add border to all fields */
+            border-radius: 4px; /* Round the corners of all fields */
+            padding: 5px; /* Add some padding to all fields */
+        }
+
+            input:not([readonly]):focus {
+                border-color: #151566; /* Highlight focused fields */
+                box-shadow: 0 0 5px rgba(21, 21, 102, 0.5), 0 0 10px rgba(21, 21, 102, 0.5), 0 0 25px rgba(21, 21, 102, 0.5);
+            }
+
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.css" integrity="sha512-C4k/QrN4udgZnXStNFS5osxdhVECWyhMsK1pnlk+LkC7yJGCqoYxW4mH3/ZXLweODyzolwdWSqmmadudSHMRLA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 col-lg-3 mb-1 position-relative" style="top:220px;height: 259px;left:80px;">
-           <div class="shadow-6-strong rounded-9 h-100 bg-white border border-1 border-secondary" style="box-sizing: border-box;"> 
-                <img height="220px" id="preview-image" src=" @Url.Action("GetImage", new { id = eid })" class="  position-absolute  start-50 translate-middle " style=" position: absolute;border-radius: 40px;width: 228px;height: 204px;object-fit: cover;box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.30);">
-                
-                
-                <div class="position-absolute    mt-5 mx-5  h-50 d-flex align-items-center text-muted" style="width:270px;left:-18px;top:40px;font-size: 10px; font-weight: 200; color: rgba(0,0,0,0.5);">
-                    Upload a image. Larger image will be resized automatically.
+            <div class="shadow-6-strong rounded-9 h-100 bg-white border border-1 border-secondary" id="profile" style="box-sizing: border-box;">
+                <div id="crop-container"> 
+                <img height="220px"  src=" #" class="  position-absolute  start-50 translate-middle " style=" position: absolute;border-radius: 40px;width: 228px;height: 204px;object-fit: cover;box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.30);">
                 </div>
-         <!--       <div class="position-absolute  id="uploadmessage"  mt-5 mx-5  h-50 d-flex align-items-center text-muted" style="left:40px;top:60px;font-size: 20px; font-weight: 200;border:2px solid black; color: rgba(0,0,0,0.5);">
-                    Image uploaded
-                       </div>-->
+
+
+
                 <div class="position-absolute  start-50 translate-middle-x" style="top:180px;">
                     <h3 class="text-center text-grey" style="background: linear-gradient(180deg, #000 37.5%, red 56.25%, #000);-webkit-background-clip: text;  -webkit-text-fill-color: transparent;text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);">@Model.firstName</h3>
-                 </div>
-                @ViewBag.StatusMessage
+                </div>
                 <div class="btn-primary position-absolute " style="right:90px;top:100px;border:1px solid rgba(0,0,0,0.25);border-radius:50%">
                     <button onclick="selectImage()" class="position-absolute bg-white btn-primary  rounded-circle " style="bottom:0px; border:0px solid rgb(0,0,0)">
-                        <img src="https://static.vecteezy.com/system/resources/thumbnails/006/998/431/small/photo-camera-icons-photo-camera-icon-design-illustration-photo-camera-simple-sign-photo-camera-image-vector.jpg" style="width: 40px; height: 40px;border-radius:50%;">
+                        <img id="camera-img" src="https://static.vecteezy.com/system/resources/thumbnails/006/998/431/small/photo-camera-icons-photo-camera-icon-design-illustration-photo-camera-simple-sign-photo-camera-image-vector.jpg" style="width: 40px; height: 40px;border-radius:50%;">
                         <form id="upload-form" enctype="multipart/form-data" style="display:none;">
-                            <input type="file" name="file" id="file" onchange="previewImage(event)">
+                            <input type="file" name="file" id="file">
                         </form>
                     </button>
                 </div>
-                <button type="button" onclick="uploadImage()" class="btn btn-primary  ms-2 mt-1 " style="background-color: #151566; position:absolute;top:100px;left:110px;">Upload</button>
+
+
+
+                <!-- Old code here -->
+                <div class="preview-container">
+                    <h4>Preview</h4>
+                    <div id="preview">
+                        <img id="image" src="#" />
+
+                    </div>
+                    <button type="button" id="Uploadimg" class="btn btn-primary  ms-2 mt-1 " style="background-color: #151566; position:absolute;top:260px;left:50px; ">Upload</button>
+                </div>
+
+
+
+
             </div>
             <p class=" text-center " style="position: absolute; top: 205px; left: 0; width: 100%; font-size: var(--font-size-lg); color: rgba(0, 0, 0, 0.59); display: inline-block;">@Model.job_Title </p>
 
@@ -48,57 +106,57 @@
                     <div class="position-absolute  rounded-9" style="top:135px;left:40px;width:5rem;height: 0.5rem; background-color: #151566;"></div>
 
                 </div>
-              <form method="post" action="@Url.Action("Edit")">
-                <div class="ms-1 mt-4 row" style="position:relative;left:20px;">
-                    <div class="col-md-6">
-                        <div class="col-10 mb-4">
-                            <label for="firstName" class="form-label fs-5  " >First Name</label>
-                            <input value="@Model.firstName" type="text" class="form-control " style="height:40px;" id="firstName" name="firstName" readonly>
+                <form method="post" action="@Url.Action("Edit")">
+                    <div class="ms-1 mt-4 row" style="position:relative;left:20px;">
+                        <div class="col-md-6">
+                            <div class="col-10 mb-4">
+                                <label for="firstName" class="form-label fs-5  ">First Name</label>
+                                <input value="@Model.firstName" type="text" class="form-control " style="height:40px;" id="firstName" name="firstName" readonly>
+                            </div>
+                            <div class="mb-4 col-10 ">
+                                <label for="address" class="form-label fs-5">Address</label>
+                                <input value="@Model.address" type="text" class="form-control" style="height:40px;" id="address" name="address" readonly>
+                            </div>
+                            <div class="col-10 mb-4">
+                                <label for="email" class="form-label fs-5">Email</label>
+                                <input value="@Model.email" type="email" class="form-control" style="height:40px;" id="email" name="email" readonly>
+                            </div>
+                            <div class="col-10 mb-4">
+                                <label for="phone" class="form-label fs-5">Phone Number</label>
+                                <input value="@Model.phone_Number" type="tel" class="form-control" style="height:40px;" id="phone" name="phone_Number" readonly>
+                            </div>
                         </div>
-                        <div class="mb-4 col-10 ">
-                            <label for="address" class="form-label fs-5">Address</label>
-                            <input value="@Model.address" type="text" class="form-control" style="height:40px;" id="address" name="address" readonly>
-                        </div>
-                        <div class="col-10 mb-4">
-                            <label for="email" class="form-label fs-5">Email</label>
-                            <input value="@Model.email" type="email" class="form-control" style="height:40px;" id="email" name="email" readonly>
-                        </div>
-                        <div class="col-10 mb-4">
-                            <label for="phone" class="form-label fs-5">Phone Number</label>
-                            <input value="@Model.phone_Number" type="tel" class="form-control" style="height:40px;" id="phone" name="phone_Number" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="col-10 mb-4">
-                            <label for="lastName" class="form-label fs-5">Last Name</label>
-                            <input value="@Model.lastName" type="text" class="form-control" style="height:40px;" id="lastName" name="lastName" readonly>
+                        <div class="col-md-6">
+                            <div class="col-10 mb-4">
+                                <label for="lastName" class="form-label fs-5">Last Name</label>
+                                <input value="@Model.lastName" type="text" class="form-control" style="height:40px;" id="lastName" name="lastName" readonly>
+
+                            </div>
+                            <div class="mb-4 col-10 ">
+                                <label for="jobTitle" class="form-label fs-5">Job Title</label>
+                                <input value="@Model.job_Title" type="text" class="form-control" style="height:40px;" id="jobTitle" name="job_Title" readonly>
+                            </div>
+                            <div class="mb-4 col-10 ">
+                                <label for="department" class="form-label fs-5">Department</label>
+                                <input value="@Model.department" type="text" class="form-control" style="height:40px;" id="department" name="department" readonly>
+                            </div>
+                            <div class="mb-4 col-10 ">
+                                <label for="manager" class="form-label fs-5">Manager</label>
+                                <input value="@Model.manager" type="text" class="form-control" style="height:40px;" id="manager" name="manager" readonly>
+                            </div>
 
                         </div>
-                        <div class="mb-4 col-10 ">
-                            <label for="jobTitle" class="form-label fs-5">Job Title</label>
-                            <input value="@Model.job_Title" type="text" class="form-control" style="height:40px;" id="jobTitle" name="job_Title" readonly>
-                        </div>
-                        <div class="mb-4 col-10 ">
-                            <label for="department" class="form-label fs-5">Department</label>
-                            <input value="@Model.department" type="text" class="form-control" style="height:40px;" id="department" name="department" readonly>
-                        </div>
-                        <div class="mb-4 col-10 ">
-                            <label for="manager" class="form-label fs-5">Manager</label>
-                            <input value="@Model.manager" type="text" class="form-control" style="height:40px;" id="manager" name="manager" readonly>
-                        </div>
-                        
-                    </div>
-                    <div class="input-group-append">
+                        <div class="input-group-append">
                             @if (ViewBag.successmessage != null)
                             {
-                                
+
                             }
                             else
                             {
                                 <button class="btn btn-secondary w-auto" type="button" id="edit-button" disabled>Edit</button>
                             }
 
-                    </div>
+                        </div>
                         @if (ViewBag.successmessage != null)
                         {
                             <button type="submit" class="btn btn-primary w-25 ms-2 mt-1" style="background-color: #151566; " disabled>Requested</button>
@@ -109,35 +167,16 @@
                         }
 
                     </div>
-              </form>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    input[readonly] {
-        background-color: #f9f9f9; /* Grey out readonly fields */
-        cursor: not-allowed; /* Change cursor on readonly fields */
-    }
-
-    input {
-        border: 1px solid #fff; /* Add border to all fields */
-        border-radius: 4px; /* Round the corners of all fields */
-        padding: 5px; /* Add some padding to all fields */
-    }
-
-        input:not([readonly]):focus {
-            border-color: #151566; /* Highlight focused fields */
-            box-shadow: 0 0 5px rgba(21, 21, 102, 0.5),
-            0 0 10px rgba(21, 21, 102, 0.5),
-            0 0 25px rgba(21, 21, 102, 0.5);
-           
-        }
-</style>
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.js" integrity="sha512-LjPH94gotDTvKhoxqvR5xR2Nur8vO5RKelQmG52jlZo7SwI5WLYwDInPn1n8H9tR0zYqTqfNxWszUEy93cHHwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+    /*
     const editButton = document.getElementById("edit-button");
     const inputFields = document.querySelectorAll("input:not(#email):not(#firstName):not(#lastName)");
 
@@ -151,26 +190,12 @@
             input.readOnly = !input.readOnly;
         });
     });
+    */
 </script>
 
 
 
 <script>
-    function previewImage(event) {
-        // Get the preview image element
-        var previewImage = document.getElementById('preview-image');
-        // Get the selected file
-        var selectedFile = event.target.files[0];
-        // Create a FileReader object
-        var reader = new FileReader();
-        // Set the FileReader to load the selected file as a data URL
-        reader.readAsDataURL(selectedFile);
-        // When the FileReader loads the file, set the preview image src to the loaded data URL and display the image element
-        reader.onload = function () {
-            previewImage.src = reader.result;
-            previewImage.style.display = "block";
-        }
-    }
 
 
 
@@ -179,12 +204,86 @@
 
     // Function to select image file
     function selectImage() {
+
         document.getElementById("file").click();
     }
 
+    var cropper = null;
+    var image = document.getElementById('image'); // camera icon
+    var inputImage = document.getElementById('file');  // image file
+    var uploadBtn = document.getElementById('Uploadimg');
+    var preview = document.getElementById('preview'); // preview section
+
+    inputImage.addEventListener('change', function () {
+        // Load image into Cropper.js
+
+        // show the preview
+
+        $('.preview-container').addClass('show');
 
 
-    // Function to upload image file
+        //all code
+        var files = this.files;
+        var file = files[0];
+        var reader = new FileReader();
+        reader.onload = function () {
+            image.src = reader.result;
+            cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 2,
+                crop: function (event) {
+                    // Update preview element with cropped image
+                    var croppedCanvas = cropper.getCroppedCanvas({
+                        width: 300,
+                        height: 200
+                    });
+                    preview.innerHTML = '';
+                    preview.appendChild(croppedCanvas);
+                }
+            });
+            uploadBtn.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    });
+
+    uploadBtn.addEventListener('click', function () {
+
+        alert("button clicked!");
+        // Get cropped image data and upload to server
+        var croppedCanvas = cropper.getCroppedCanvas();
+        var croppedDataUrl = croppedCanvas.toDataURL();
+        console.log(croppedDataUrl);
+
+
+
+        // TODO: send this data to server using AJAX or form submit
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/Home/UploadImage");
+        console.log(croppedDataUrl);
+        console.log(typeof croppedDataUrl);
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+               window.location.href = "https://localhost:7000/Home/Profile/" + @eid;
+            }
+        }
+        xhr.send(croppedDataUrl);
+
+
+
+
+        /*   // Reset input, preview, and Cropper.js
+           inputImage.value = '';
+           preview.innerHTML = '';
+           cropper.destroy();
+           cropper = null;
+           uploadBtn.style.display = 'none';
+           image.src = '#';*/
+    });
+</script>
+
+<!--
+
+ // Function to upload image file
     function uploadImage() {
 
 
@@ -216,3 +315,4 @@
 
 
 </script>
+*/-->

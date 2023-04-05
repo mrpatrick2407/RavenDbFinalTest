@@ -330,8 +330,10 @@ namespace RavenDbFinalTest.Controllers
         }
     */
         [HttpPost]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile imageFile)
+        public async Task<IActionResult> UploadImage(string imageFile)
         {
+
+            Console.WriteLine("Image file" + imageFile);
 
 
             //graphqlquery
@@ -350,21 +352,22 @@ namespace RavenDbFinalTest.Controllers
             var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
             var user = req.Data.getemployeebyid; 
             string userid = user.id.ToString();
+            Console.WriteLine("useridofab" + userid);
 
-            string imageString = "";
-            using (var memoryStream = new MemoryStream())
-            {
-                await imageFile.CopyToAsync(memoryStream);
-                byte[] imageBytes = memoryStream.ToArray();
-                imageString = Convert.ToBase64String(imageBytes);
-            }
-            
+            /*        string imageString = "";
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await imageFile.CopyToAsync(memoryStream);
+                        byte[] imageBytes = memoryStream.ToArray();
+                        imageString = Convert.ToBase64String(imageBytes);
+                    }*/
+
             var imageuploadreq = new GraphQLRequest
             {
                 Query = @"mutation example($image:String!,$userid:String!){
                   storeImageAsync(image: $image,userid :$userid)
                 }",
-                Variables = new { image = imageString,userid=userid }
+                Variables = new { image = imageFile,userid=userid }
             };
             try
             {
