@@ -16,10 +16,7 @@ namespace RavenDbFinalTest.Controllers
 {
     public class AdminController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        
         public IActionResult CreateEmployee()
         {
             return View();
