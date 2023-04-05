@@ -90,7 +90,8 @@ left:-20px;">
     function VerifyOtp(event) {
         event.preventDefault();
         var userotp = document.getElementById("userotp");
-        var userotpval = userotp.value; var email = document.getElementById("email");
+        var userotpval = userotp.value; 
+        var email = document.getElementById("email");
         const error = document.getElementById('otp-error');
         var emailval = email.value+"@@ceiamerica.com";
         var xhr = new XMLHttpRequest();
@@ -114,23 +115,6 @@ left:-20px;">
 
         xhr.send(params);
 
-       /* $.ajax({
-            url: '/home/LoginAuth',
-            type: 'post',
-            data: {
-             
-                email2: emailval,
-                userotp: userotpval
-            },
-            success: function (response) {
-                if (response == "Invalid OTP") {
-                    error.innerText="Please Enter Valid OTP"
-                }
-                else {
-                    window.location.href = "https://localhost:7000/home/LoginAuth?email2="+emailval;
-                }                 
-            }
-        });*/
     }
     </script>
 
@@ -140,9 +124,11 @@ left:-20px;">
         const emailError = document.getElementById('email-error');
         const divToShow = document.getElementById('my-div');
         const email = document.getElementById('email').value;
+        const emailwork = document.getElementById('email');
         const sendotpbtn = document.getElementById('load-index');
         if (email == '') {
             divToShow.classList.add('d-none');
+            emailwork.focus();
             emailError.innerText = 'Enter Username';
             return;
         }
@@ -198,6 +184,8 @@ left:-20px;">
                     } else {
                         divToShow.classList.add('d-none');
                         emailError.innerText = 'Invalid Username';
+                        emailwork.focus();
+                        
                     }
                 } else {
                     console.log('Request failed.  Returned status of ' + xhr.status);

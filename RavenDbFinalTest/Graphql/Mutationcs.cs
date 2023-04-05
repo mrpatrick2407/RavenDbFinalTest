@@ -1,5 +1,6 @@
 ﻿using GraphQL;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Operations.Attachments;
 using RavenDbFinalTest.Models;
 namespace RavenDbFinalTest.Graphql
 {
@@ -41,6 +42,9 @@ namespace RavenDbFinalTest.Graphql
                 return login;
             }
         }
+       
+
+
 
         [GraphQLName("editdata")]
         public AdminRequest? editEmployee(Profile2 data)

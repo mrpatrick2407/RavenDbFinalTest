@@ -349,26 +349,11 @@ namespace RavenDbFinalTest.Controllers
             };
             var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
             var user = req.Data.getemployeebyid;
-            Console.WriteLine($"Upload Image:{user.id}");
+            
             string userid = user.id.ToString();
             Console.WriteLine("User id type"+userid.GetType().Name+"userid "+userid);
 
-
-            Console.WriteLine("function called");
-            if (imageFile == null || imageFile.Length == 0)
-            {
-                Console.WriteLine("if called");
-                return BadRequest("Please select an image file to upload.");
-
-            }
-           // Read the image data into a byte array
-            byte[] imageData;
-            using (var stream = new MemoryStream())
-            {
-                await imageFile.CopyToAsync(stream);
-                imageData = stream.ToArray();
-            }
-            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
+       var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
             using (var store = new DocumentStore
             {
                 Urls = new[] { "https://a.free.rmanojcei.ravendb.cloud/" },
@@ -383,14 +368,14 @@ namespace RavenDbFinalTest.Controllers
                     using (var stream = imageFile.OpenReadStream())
                     {
                         
-                        Console.WriteLine("else called");
+                        Console.WriteLine(stream.GetType().Name);
                         stream.Position = 0;
                         session.Advanced.Attachments.Store(userid, "Profile.jpg", stream, imageFile.ContentType);
                         session.SaveChanges();
                     }
                     ViewBag.StatusMessage = "Image uploaded successfully!";
                    
-                    return View();
+                    return Ok();
 
                 }
 
