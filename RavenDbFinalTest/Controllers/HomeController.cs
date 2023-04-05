@@ -351,9 +351,68 @@ namespace RavenDbFinalTest.Controllers
             var user = req.Data.getemployeebyid;
             
             string userid = user.id.ToString();
-            Console.WriteLine("User id type"+userid.GetType().Name+"userid "+userid);
 
-       var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
+
+            string imageString = "";
+            using (var memoryStream = new MemoryStream())
+            {
+                await imageFile.CopyToAsync(memoryStream);
+                byte[] imageBytes = memoryStream.ToArray();
+                imageString = Convert.ToBase64String(imageBytes);
+            }
+            
+
+
+
+            Console.WriteLine("User id type"+userid.GetType().Name+"userid "+userid);
+            Console.WriteLine("THis is the contrnt type you are looking for"+imageFile.ContentType);
+            var imageuploadreq = new GraphQLRequest
+            {
+                Query = @"mutation example($image:String!,$userid:String!){
+                  storeImageAsync(image: $image,userid :$userid)
+                }",
+                Variables = new { image = imageString,userid=userid }
+            };
+            try
+            {
+                await client2.SendQueryAsync<dynamic>(imageuploadreq);
+                return Ok();
+            }
+            catch (Exception ex) { 
+               Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+          
+
+
+        }
+
+
+     /*   [HttpPost]
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile imageFile)
+        {
+
+
+            //graphqlquery
+            int eid = Int16.Parse(HttpContext.Session.GetString("usereid"));
+
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query exaple($id:Int!){
+                 getemployeebyid(id: $id) {
+                   id
+                 }
+                }",
+                Variables = new { id = eid }
+            };
+            var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            var user = req.Data.getemployeebyid;
+
+            string userid = user.id.ToString();
+            Console.WriteLine("User id type" + userid.GetType().Name + "userid " + userid);
+            Console.WriteLine("THis is the contrnt type you are looking for" + imageFile.ContentType);
+            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
             using (var store = new DocumentStore
             {
                 Urls = new[] { "https://a.free.rmanojcei.ravendb.cloud/" },
@@ -364,17 +423,16 @@ namespace RavenDbFinalTest.Controllers
                 store.Initialize();
                 using (var session = store.OpenSession())
                 {
-                        
+
                     using (var stream = imageFile.OpenReadStream())
                     {
-                        
-                        Console.WriteLine(stream.GetType().Name);
+
                         stream.Position = 0;
                         session.Advanced.Attachments.Store(userid, "Profile.jpg", stream, imageFile.ContentType);
                         session.SaveChanges();
                     }
                     ViewBag.StatusMessage = "Image uploaded successfully!";
-                   
+
                     return Ok();
 
                 }
@@ -383,7 +441,10 @@ namespace RavenDbFinalTest.Controllers
 
 
             }
-        }
+        }*/
+
+
+
         public async Task<IActionResult> LoginAuth(string email2)
         {   
             try
@@ -536,10 +597,13 @@ namespace RavenDbFinalTest.Controllers
             var user = req.Data.getimage;
             Console.WriteLine(user.firstName);
             Console.WriteLine(user.imageBase64.GetType().Name);
+            Console.WriteLine(user.imageBase64.ToString());
+
             if (user.imageBase64 != null)
             {
                 // Convert to string
                 var imageData = Convert.FromBase64String(user.imageBase64.ToString());
+
                 var stream = new MemoryStream(imageData);
                 return new FileStreamResult(stream, "image/jpeg");
 

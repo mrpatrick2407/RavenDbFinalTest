@@ -1,4 +1,5 @@
 ﻿using GraphQL;
+using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Operations.Attachments;
 using RavenDbFinalTest.Models;
@@ -42,9 +43,25 @@ namespace RavenDbFinalTest.Graphql
                 return login;
             }
         }
-       
 
+        public  string StoreImageAsync(string image,string userid)
+        {
+            using(var _session = store.OpenSession())
+            {
 
+                byte[] imageBytes = Convert.FromBase64String(image);
+                using (MemoryStream stream = new MemoryStream(imageBytes))
+                {
+                    string contentType = "image/jpeg";
+                     _session.Advanced.Attachments.Store(userid, "Profile.jpg", stream, "image/jpeg");
+                     _session.SaveChanges();
+                    return "Uploadded";
+                }
+
+            }
+            
+        }
+        
 
         [GraphQLName("editdata")]
         public AdminRequest? editEmployee(Profile2 data)
