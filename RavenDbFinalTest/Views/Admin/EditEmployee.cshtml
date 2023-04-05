@@ -1,0 +1,76 @@
+﻿@model RavenDbFinalTest.Models.Company
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+<br />
+<br />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <br />
+                <div class="card-header">
+                    <h2 class="text-center">Edit Employee</h2>
+                </div>
+                <div class="d-flex justify-content-end mb-3">
+                    <a class="btn btn-primary mx-3" asp-action="ListEmployee">Back to List</a>
+                </div>
+                <hr />
+                <div class="card-body">
+                    <form asp-action="EditEmployee">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="form-group row">
+                            <label asp-for="eid" class="col-md-4 col-form-label text-md-right">Employee ID</label>
+                            <div class="col-md-6">
+                                <input value="@ViewBag.eid" asp-for="eid" class="form-control" />
+                                <span asp-validation-for="eid" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group row">
+                            <label asp-for="Name" class="col-md-4 col-form-label text-md-right">Name</label>     <div class="col-md-6">
+                                <input value="@ViewBag.Name" asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group row">
+                            <label asp-for="role" class="col-md-4 col-form-label text-md-right">Role</label>  <div class="col-md-6">
+                                <input value="@ViewBag.role" asp-for="role" class="form-control" />
+                                <span asp-validation-for="role" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group row">
+                            <label asp-for="Phone" class="col-md-4 col-form-label text-md-right">Phone</label>  <div class="col-md-6">
+                                <input type="number" value="@ViewBag.Phone" asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group row">
+                            <label asp-for="EmailId" class="col-md-4 col-form-label text-md-right">Email</label>  <div class="col-md-6">
+                                <input type="email" value="@ViewBag.EmailId" asp-for="EmailId" class="form-control" />
+                                <span asp-validation-for="EmailId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group text-center">
+                            <button class="btn mx-2" style="background-color:#FF9201;" type="submit"><h style="color:whitesmoke;">Update</h></button>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

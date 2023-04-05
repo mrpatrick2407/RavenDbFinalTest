@@ -348,10 +348,8 @@ namespace RavenDbFinalTest.Controllers
                 Variables = new { id = eid }
             };
             var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
-            var user = req.Data.getemployeebyid;
-            
+            var user = req.Data.getemployeebyid; 
             string userid = user.id.ToString();
-
 
             string imageString = "";
             using (var memoryStream = new MemoryStream())
@@ -361,11 +359,6 @@ namespace RavenDbFinalTest.Controllers
                 imageString = Convert.ToBase64String(imageBytes);
             }
             
-
-
-
-            Console.WriteLine("User id type"+userid.GetType().Name+"userid "+userid);
-            Console.WriteLine("THis is the contrnt type you are looking for"+imageFile.ContentType);
             var imageuploadreq = new GraphQLRequest
             {
                 Query = @"mutation example($image:String!,$userid:String!){
@@ -388,61 +381,7 @@ namespace RavenDbFinalTest.Controllers
         }
 
 
-     /*   [HttpPost]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile imageFile)
-        {
-
-
-            //graphqlquery
-            int eid = Int16.Parse(HttpContext.Session.GetString("usereid"));
-
-            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-            var graphqlreq = new GraphQLRequest
-            {
-                Query = @"query exaple($id:Int!){
-                 getemployeebyid(id: $id) {
-                   id
-                 }
-                }",
-                Variables = new { id = eid }
-            };
-            var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
-            var user = req.Data.getemployeebyid;
-
-            string userid = user.id.ToString();
-            Console.WriteLine("User id type" + userid.GetType().Name + "userid " + userid);
-            Console.WriteLine("THis is the contrnt type you are looking for" + imageFile.ContentType);
-            var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
-            using (var store = new DocumentStore
-            {
-                Urls = new[] { "https://a.free.rmanojcei.ravendb.cloud/" },
-                Database = "TestEmployee",
-                Certificate = certificate
-            })
-            {
-                store.Initialize();
-                using (var session = store.OpenSession())
-                {
-
-                    using (var stream = imageFile.OpenReadStream())
-                    {
-
-                        stream.Position = 0;
-                        session.Advanced.Attachments.Store(userid, "Profile.jpg", stream, imageFile.ContentType);
-                        session.SaveChanges();
-                    }
-                    ViewBag.StatusMessage = "Image uploaded successfully!";
-
-                    return Ok();
-
-                }
-
-
-
-
-            }
-        }*/
-
+    
 
 
         public async Task<IActionResult> LoginAuth(string email2)
@@ -597,7 +536,7 @@ namespace RavenDbFinalTest.Controllers
             var user = req.Data.getimage;
             Console.WriteLine(user.firstName);
             Console.WriteLine(user.imageBase64.GetType().Name);
-            Console.WriteLine(user.imageBase64.ToString());
+           
 
             if (user.imageBase64 != null)
             {
@@ -614,61 +553,7 @@ namespace RavenDbFinalTest.Controllers
             }
 
         }
-        //This is to getimage
-
-        /*  public IActionResult GetImage()
-          {
-              var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
-              //var certificate = new X509Certificate2("certificate.pfx", "password");
-
-              using (var store = new DocumentStore
-              {
-                  Urls = new[] { " https://a.free.rmanojcei.ravendb.cloud/" },
-                  Database = "TestEmployee",
-                  Certificate = certificate
-              })
-              {
-                  store.Initialize();
-
-                  using (var session = store.OpenSession())
-                  {
-                      var attachment = session.Advanced.Attachments.Get("4065d794-2c10-4d45-bf8f-b8befb9d1797", "mathew.jpg");
-                      if (attachment != null)
-                      {
-                          var imageStream = new MemoryStream();
-                          attachment.Stream.CopyTo(imageStream);
-
-                          return File(imageStream.ToArray(), "image/jpeg"); // Replace "image/jpeg" with the appropriate content type
-                      }
-                      else
-                      {
-                          Console.WriteLine("Not ound");
-                          return NotFound();
-                      }
-                  }
-              }
-
-          }
-        */
-
-
-        /*
-         string imageDataString = user.imageBase64.ToString(); // Convert to string
-                var imageData = Convert.FromBase64String(imageDataString);
-
-                // Save the image to a file
-                using (var fileStream = new FileStream("test.jpg", FileMode.Create, FileAccess.Write))
-                {
-                    await fileStream.WriteAsync(imageData, 0, imageData.Length);
-                }
-
-                // Return the image as a FileStreamResult
-                var fileStreamResult = new FileStreamResult(new MemoryStream(imageData), "image/jpeg");
-                fileStreamResult.FileDownloadName = "test.jpg";
-                return fileStreamResult;
-         
-         */
-
+       
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("cToken");

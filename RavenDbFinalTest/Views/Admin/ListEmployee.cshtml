@@ -1,0 +1,45 @@
+﻿@model IEnumerable<RavenDbFinalTest.Models.Company>
+
+@{
+    ViewData["Title"] = "ListEmployee";
+
+}
+<br />
+<h1>Employees</h1>
+
+<div class="d-flex justify-content-end mb-3">
+    <a class="btn btn-primary" asp-action="CreateEmployee">Create New</a>
+</div>
+<hr />
+<table class="table table-striped">
+    <thead>
+        <tr>
+
+            <th scope="col" style="color: #151566;">Employee ID</th>
+            <th scope="col" style="color: #151566;">Name</th>
+            <th scope="col" style="color: #151566;">Role</th>
+
+            <th scope="col" style="color: #151566;">Phone</th>
+            <th scope="col" style="color: #151566;">Email</th>
+            <th scope="col" style="color: #151566;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <th scope="row">@item.eid</th>
+                <td>@item.Name</td>
+                <td>@item.role</td>
+
+                <td>@item.Phone</td>
+                <td>@item.EmailId</td>
+                <td>
+                    <a href="/admin/editemployee?id=@item.Id" class="btn btn-sm btn-outline-warning me-2" style="color: #FF9201; border-color: #FF9201;">View</a>
+                    <a href="/admin/deleteemployeebyid?eid=@item.eid" class="btn btn-sm btn-danger" style="background-color: #FF9201; border-color: #FF9201;">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -89,7 +89,15 @@
                         
                     </div>
                     <div class="input-group-append">
-                        <button class="btn btn-secondary w-auto" type="button" id="edit-button">Edit</button>
+                            @if (ViewBag.successmessage != null)
+                            {
+                                
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary w-auto" type="button" id="edit-button" disabled>Edit</button>
+                            }
+
                     </div>
                         @if (ViewBag.successmessage != null)
                         {

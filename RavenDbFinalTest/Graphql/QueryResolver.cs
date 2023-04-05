@@ -27,8 +27,7 @@ namespace RavenDbFinalTest.Graphql
         }
         [GraphQLName("getemployee")]
         public Company GetEmployee(string email)
-        {
-            
+        {            
             using (var session =_documentStore.OpenSession())
             {
 
@@ -42,7 +41,6 @@ namespace RavenDbFinalTest.Graphql
                     return user;
                 }
             }
-        
         }
         [GraphQLName("getimage")]
         public Profile2 getimage(int id)
@@ -138,6 +136,45 @@ namespace RavenDbFinalTest.Graphql
             
            
             }
+
+
+
+
+        //AdminController Queries
+
+
+        [GraphQLName("getemployeebyidadmin")]
+        public Company GetEmployeeById(string Id)
+        {
+
+            using (var session = _documentStore.OpenSession())
+            {
+
+                var user = session.Query<Company>().FirstOrDefault(e => e.Id == Id);
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return user;
+                }
+            }
+        }
+
+
+
+        public IEnumerable<Company> GetAllEmployees()
+        {
+
+            using (var session = _documentStore.OpenSession())
+            {
+                return session.Query<Company>().ToList();
+            }
+
+        }
+
+
 
     }
 
