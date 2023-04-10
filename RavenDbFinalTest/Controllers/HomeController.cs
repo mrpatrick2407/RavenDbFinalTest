@@ -334,7 +334,7 @@ namespace RavenDbFinalTest.Controllers
         {
 
             Console.WriteLine("Image file" + imageFile);
-
+            
 
             //graphqlquery
             int eid = Int16.Parse(HttpContext.Session.GetString("usereid"));
@@ -354,14 +354,15 @@ namespace RavenDbFinalTest.Controllers
             string userid = user.id.ToString();
             Console.WriteLine("useridofab" + userid);
 
-            /*        string imageString = "";
+         /*         string imageString = "";
                     using (var memoryStream = new MemoryStream())
                     {
                         await imageFile.CopyToAsync(memoryStream);
                         byte[] imageBytes = memoryStream.ToArray();
                         imageString = Convert.ToBase64String(imageBytes);
-                    }*/
+                    }
 
+        */
             var imageuploadreq = new GraphQLRequest
             {
                 Query = @"mutation example($image:String!,$userid:String!){
@@ -369,22 +370,24 @@ namespace RavenDbFinalTest.Controllers
                 }",
                 Variables = new { image = imageFile,userid=userid }
             };
-            try
-            {
-                await client2.SendQueryAsync<dynamic>(imageuploadreq);
+           
+            await client2.SendQueryAsync<dynamic>(imageuploadreq);
                 return Ok();
-            }
-            catch (Exception ex) { 
-               Console.WriteLine(ex.Message);
-                return BadRequest();
-            }
+            
+           
+            
           
 
 
         }
 
+        public async Task<IActionResult> Test(string email)
+        {
+            Console.WriteLine(email);
+            return BadRequest();
+        }
 
-    
+
 
 
         public async Task<IActionResult> LoginAuth(string email2)
@@ -432,7 +435,6 @@ namespace RavenDbFinalTest.Controllers
           // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
             if (true)
             {
-                Console.WriteLine("This is from get req" + globaleid);
 
                 var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                     var request = new GraphQLRequest
