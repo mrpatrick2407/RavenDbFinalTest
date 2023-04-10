@@ -381,12 +381,7 @@ namespace RavenDbFinalTest.Controllers
 
         }
 
-        public async Task<IActionResult> Test(string email)
-        {
-            Console.WriteLine(email);
-            return BadRequest();
-        }
-
+        
 
 
 

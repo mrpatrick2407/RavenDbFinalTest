@@ -248,51 +248,21 @@
         alert("button clicked!");
         // Get cropped image data and upload to server
         var croppedCanvas = cropper.getCroppedCanvas();
-        /*croppedCanvas.toBlob(function (blob) {
-            // TODO: send this blob data to server using AJAX or form submit
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/Home/UploadImage");
-            xhr.onload = () => {
-                if (xhr.status == 200) {
-                    window.location.href = "https://localhost:7000/Home/Profile/" + @eid;
-                }
-            }
-            xhr.send(blob);
-        });*/
+        
         var croppedDataUrl = croppedCanvas.toDataURL();
         var croppedImageData = croppedDataUrl.split(',')[1];
-        console.log("Type"+typeof(croppedImageData));
-        console.log("val"+croppedImageData);
 
-
-
-        var params = 'email=' + encodeURIComponent("rhteophilus");
-        var url='home/Test';
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                window.location.href = "https://localhost:7000/Home/Profile/" + @eid;
-            } else {
-                console.log('Error: ' + xhr.status);
-            }
-        };
-
-        xhr.send(params);
-
-        /*
-        var params = 'email=' + encodeURIComponent("rtheophilus");
-        // TODO: send this data to server using AJAX or form submit
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/Home/Test",true);
+        xhr.open("POST", "/Home/UploadImage", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onload = () => {
             if (xhr.status == 200) {
-               window.location.href = "https://localhost:7000/Home/Profile/" + @eid;
+                console.log("Success");
+                // window.location.href = "https://localhost:7000/Home/Profile/" + @eid;
             }
         }
-        xhr.send(params);
-        */
+        xhr.send("imageFile=" + encodeURIComponent(croppedImageData));
+
         
 
 
