@@ -57,7 +57,57 @@ namespace RavenDbFinalTest.Controllers
             }
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> Action(string id,bool check)
+        {   
+            var fid = Int16.Parse(id);
+            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLHttpRequest
+            {
+                Query = @"",
+                Variables = new { id = fid, check = check }
+            };
+            try
+            {
+                await client.SendQueryAsync<dynamic>(graphqlreq);
+                if (check)
+                {
+                    TempData["SuccessMessage"] = "Approved successfully";
 
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Denied successfully";
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                TempData["SuccessMessage"] = "Uh-Oh Something Went Wrong ";
+
+            }
+
+            return View();
+        }
+        public async Task<IActionResult> AdminRequest()
+        {
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query{
+                    allemployeereq{
+                    id
+                    firstName
+                  }
+                }",
+
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            var requests = res.Data.allemployeereq.ToObject<List<AdminRequest>>();
+
+            return View(requests);
+        }
 
         public async Task<IActionResult> ListEmployee()
         {

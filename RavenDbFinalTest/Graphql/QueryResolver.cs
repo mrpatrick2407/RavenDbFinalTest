@@ -162,7 +162,14 @@ namespace RavenDbFinalTest.Graphql
             }
         }
 
-
+        [GraphQLName("allemployeereq")]
+        public IEnumerable<AdminRequest> employeereq()
+        {
+            using(var session= _documentStore.OpenSession())
+            {
+                return session.Query<AdminRequest>(collectionName: "AdminRequests").ToList();
+            }
+        }
 
         public IEnumerable<Company> GetAllEmployees()
         {

@@ -15,6 +15,9 @@ using System.Security.Cryptography;
 using GraphQL.Validation;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.SignalR;
+using System.Drawing;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -332,6 +335,55 @@ namespace RavenDbFinalTest.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(string imageFile)
         {
+            /*//professionalism check code begins
+            byte[] imageBytes = Convert.FromBase64String(imageFile);
+
+            var file = new FormFile(new MemoryStream(imageBytes), 0, imageBytes.Length, "Image", "image.jpg")
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "image/jpeg"
+            };
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Please select an image file");
+            }
+            
+
+            
+            var fileName = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+            var filePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+
+
+            var imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/images/{fileName}";
+            var httpClient = new HttpClient();
+
+
+
+            // set the authorization header
+            var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes("4Dl0Qmtxsme9lHWFrnajXxcl:qcLwSHZ8Yl3Az7uWH8Zh3kNn9iiuiEi6x4a90PNil6Qi4G6w"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+            // send the request using HttpClient
+            var response = await httpClient.GetAsync("https://api.everypixel.com/v1/quality_ugc?url="+imageUrl);
+
+
+
+            // read the response content as a string
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseContent);
+            Console.WriteLine(imageUrl);
+            return Content(responseContent);*/
+            //professionalism check code ends
 
             Console.WriteLine("Image file" + imageFile);
             
