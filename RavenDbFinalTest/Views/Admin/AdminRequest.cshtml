@@ -5,29 +5,23 @@
 }
 
 <h1>AdminRequest</h1>
+@if (Model == null)
+{
+    <h1>No pending requests</h1>
+}
 
-
-<table class="table">
-    <thead>
+<table style="border-radius:10px;;box-shadow:0 0 3px  black,0 0 12px   black;" class="table table-hover table-striped table-responsive text-nowrap">
+    <thead class="table-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
+            
+           
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Phone_Number)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.Job_Title)
             </th>
@@ -38,30 +32,22 @@
                 @Html.DisplayNameFor(model => model.Manager)
             </th>
             
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
+           
+            <tr>
+              
+
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Phone_Number)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.Job_Title)
             </td>
@@ -71,14 +57,224 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Manager)
             </td>
+           
             <td>
-                @Html.DisplayFor(modelItem => item.ImageBase64)
-            </td>
-            <td>
-                @Html.ActionLink("Approve", "Action", new { id=item.Id ,check=true}) |
-                @Html.ActionLink("Deny", "Action", new {  id=item.Id ,check=false }) |
+                   <!-- <button onclick="sendRequest('@item.Id', true)">Approve</button>
+                     <button onclick="sendRequest('@item.Id', false)">Deny</button>-->
+                    <!-- Button trigger modal -->
+
+                    <button type="button" class="btn btn-dark" data-mdb-toggle="modal" data-mdb-target="#staticBackdrop_@item.eid">
+                        View Details
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="staticBackdrop_@item.eid" data-mdb-backdrop="static" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Employee Details</h5>
+                                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div id="modalbody_@item.eid" style="word-wrap:break-word;" class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold">Email</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="mb-0">@Html.DisplayFor(modelItem => item.Email)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold">Phone Number</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="mb-0">@Html.DisplayFor(modelItem => item.Phone_Number)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold">Address</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="mb-0">@Html.DisplayFor(modelItem => item.Address)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold">Job Title</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="mb-0">@Html.DisplayFor(modelItem => item.Job_Title)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold">Department</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="mb-0">@Html.DisplayFor(modelItem => item.Department)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold">Manager</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="mb-0">@Html.DisplayFor(modelItem => item.Manager)</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer ">
+                                    <div>
+                                        <button id="modalbuttonaccept_@item.eid" type="button" style="background:#1DB954 ; min-width:130px; " onclick="sendRequest('@item.eid','@item.Id', true); showSpinner(this);" class="btn w-100 btn-dark">
+                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                            <svg id="svgaccept_@item.eid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20px" height="20px">
+                                                <path d="M32,6C17.641,6,6,17.641,6,32c0,14.359,11.641,26,26,26s26-11.641,26-26C58,17.641,46.359,6,32,6z M29,42L18,31l2-3l9,6 l13.957-12L46,25L29,42z" />
+                                            </svg>
+                                            <span class="btn-text">Accept</span>
+                                        </button>
+                                    </div>
+
+                                    <button id="modalbuttondeny_@item.eid" class="btn btn-dark text-white" style=" min-width:130px;background:rgba(255,0,0,0.8)" type=" button" onclick="sendRequest('@item.eid','@item.Id', false);showSpinner(this)">
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+
+                                        <?xml version="1.0" encoding="UTF-8" ?>
+                                        <svg id="svgdeny_@item.eid" width="22px" height="22px" version="1.1" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+                                            <g>
+                                                <path d="m264.09 262.45c-4.6562 0.003907-9.1172 1.8633-12.398 5.168l-102.18 102.18c-13.523 13.52-13.523 36.082 0 49.605l61.102 61.102c13.523 13.52 36.082 13.52 49.605 0l102.18-102.18c3.2969-3.2852 5.1523-7.7461 5.1523-12.402s-1.8555-9.1172-5.1523-12.402c-3.2852-3.2969-7.7461-5.1523-12.402-5.1523-4.6523 0-9.1172 1.8555-12.402 5.1523l-102.18 102.31-61.23-61.23 102.31-102.18c3.3008-3.2852 5.1523-7.7461 5.1523-12.402 0-4.6523-1.8516-9.1172-5.1523-12.398-3.2812-3.3047-7.7422-5.1641-12.402-5.168z" />
+                                                <path d="m210.61 79.527-61.102 61.102c-13.52 13.523-13.523 35.953 0 49.477l102.18 102.31c3.2812 3.2969 7.7461 5.1523 12.398 5.1523 4.6562 0 9.1211-1.8555 12.402-5.1523 3.3008-3.2852 5.1523-7.75 5.1523-12.402 0-4.6562-1.8516-9.1172-5.1523-12.402l-102.31-102.18 61.23-61.23 102.18 102.18c3.2852 3.2969 7.75 5.1523 12.402 5.1523 4.6562 0 9.1172-1.8555 12.402-5.1523 3.2578-3.2812 5.0898-7.7148 5.0898-12.34 0-4.6211-1.832-9.0547-5.0898-12.336l-102.18-102.18c-13.523-13.523-36.082-13.523-49.605 0z" />
+                                                <path d="m439.91 79.527-102.31 102.18v-0.003907c-3.2578 3.2812-5.0859 7.7148-5.0859 12.336 0 4.625 1.8281 9.0586 5.0859 12.34 3.2852 3.2969 7.75 5.1523 12.402 5.1523 4.6562 0 9.1172-1.8555 12.402-5.1523l102.18-102.18 61.23 61.23-44.953 44.957c-3.2617 3.2773-5.0898 7.7148-5.0898 12.336 0 4.625 1.8281 9.0586 5.0898 12.336 3.2812 3.3008 7.7461 5.1523 12.398 5.1523 4.6562 0 9.1172-1.8516 12.402-5.1523l44.824-44.957c13.523-13.523 13.523-35.953 0-49.477l-61.102-61.102c-13.523-13.523-35.953-13.523-49.477 0z" />
+                                                <path d="m450.27 265.68-28.648 28.648" />
+                                                <path d="m450.24 248.23c-4.6406-0.027344-9.0977 1.7852-12.402 5.043l-28.551 28.68 0.003907-0.003906c-3.3008 3.2852-5.1562 7.7461-5.1562 12.402s1.8555 9.1172 5.1562 12.402c3.2773 3.2578 7.7109 5.0859 12.336 5.0859 4.6211 0 9.0586-1.8281 12.336-5.0859l28.68-28.68c3.2969-3.2852 5.1523-7.7461 5.1523-12.402 0-4.6523-1.8555-9.1172-5.1523-12.398-3.3047-3.2578-7.7656-5.0703-12.402-5.043z" />
+                                                <path d="m450.27 294.32-28.648-28.648" />
+                                                <path d="m421.56 248.23c-4.5938 0.007813-9 1.8164-12.27 5.043-3.3008 3.2812-5.1562 7.7461-5.1562 12.398 0 4.6562 1.8555 9.1172 5.1562 12.402l28.551 28.68h-0.003906c3.2852 3.2969 7.7461 5.1523 12.402 5.1523 4.6523 0 9.1172-1.8555 12.402-5.1523 3.2969-3.2852 5.1523-7.7461 5.1523-12.402s-1.8555-9.1172-5.1523-12.402l-28.68-28.68v0.003906c-3.3008-3.2578-7.7617-5.0703-12.402-5.043z" />
+                                                <path d="m493.26 319.8c-4.6562 0.003907-9.1172 1.8633-12.398 5.168-3.2617 3.2773-5.0898 7.7148-5.0898 12.336 0 4.625 1.8281 9.0586 5.0898 12.336l44.953 44.957-61.23 61.23-102.18-102.31c-3.2852-3.2969-7.7461-5.1523-12.402-5.1523-4.6523 0-9.1172 1.8555-12.402 5.1523-3.2969 3.2852-5.1523 7.75-5.1523 12.402 0 4.6562 1.8555 9.1172 5.1523 12.402l102.31 102.18c13.523 13.52 35.953 13.52 49.477 0l61.102-61.102c13.523-13.523 13.523-36.086 0-49.605l-44.824-44.828c-3.2812-3.3047-7.7461-5.1641-12.402-5.168z" />
+                                            </g>
+                                        </svg>
+                                        <span class="btn-text">Deny</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </td>
         </tr>
 }
+
     </tbody>
 </table>
+<!-- Button trigger modal -->
+
+
+<script>
+    function showSpinner(button) {
+        // Hide the button text and show the spinner icon
+        button.querySelector('.btn-text').classList.add('d-none');
+        button.querySelector('.spinner-border').classList.remove('d-none');
+         button.querySelector('svg').classList.add('d-none');
+        
+    }
+    function sendRequest(eid , id, check) {
+        var xhr = new XMLHttpRequest();
+        var url = "/Admin/Action";
+        var docs =" #modalbody_" + eid;
+        console.log(docs);
+        var params = "id=" + eid + "&check=" + check;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                setTimeout(function () {
+                    var button = document.querySelector('#modalbuttonaccept_' + eid);
+                    var button2 = document.querySelector('#modalbuttondeny_' + eid);
+
+                    if(check){
+                        var button = document.querySelector('#modalbuttonaccept_' + eid);
+                        button.innerHTML = 'Approved';
+                        
+                        button.classList.add('btn-success');
+                        button.disabled = true;
+                        button2.classList.add('d-none')
+                        const modalbody = document.querySelector(docs);
+                        if (!modalbody) {
+                            console.log("no eemmnt")
+                        }
+                        modalbody.innerHTML = '';
+                        modalbody.innerHTML = '<div  style="border:1px solid black;text-align: center; padding: 20px;"><h1 style="font-size: 32px; font-weight: bold; margin-bottom: 20px;">Request Approved</h1><p style="font-size: 20px;">The employee\'s request has been Approved<br/> Thank you for reviewing.</p></div>';
+                    } else {
+                        
+                        button2.innerHTML = 'Denied';
+                        button2.classList.remove('btn-dark');
+                        button2.classList.add('btn-danger');
+                        button2.disabled = true;
+                        button.classList.add('d-none')
+
+                        const modalbody = document.querySelector(docs);
+                        if (!modalbody) {
+                            console.log("no eemmnt")
+                        }
+                        modalbody.innerHTML = '';
+                        modalbody.innerHTML = '<div  style="border:1px solid black;text-align: center; padding: 20px;"><h1 style="font-size: 32px; font-weight: bold; margin-bottom: 20px;">Request Denied</h1><p style="font-size: 20px;">The employee\'s request has been Denied<br/> Thank you for reviewing.</p></div>';
+                    }
+                    setTimeout(()=>{
+                        location.reload();
+                    },1200)
+
+                }, 3000)
+                
+            }else{
+                setTimeout(function () {
+                    var button = document.querySelector('#modalbuttonaccept_' + eid);
+                    var button2 = document.querySelector('#modalbuttondeny_' + eid);
+
+                    if (check) {
+                        var button = document.querySelector('#modalbuttonaccept_' + eid);
+                        button.innerHTML = 'Approve';
+                        console.log("#svgaccept_"+eid)
+
+                        
+                        button.classList.remove('btn-dark');
+                        button.classList.add('btn-success');
+                        
+                        
+                        const modalbody = document.querySelector(docs);
+                        if (!modalbody) {
+                            console.log("no eemmnt")
+                        }
+                        modalbody.innerHTML = '';
+                        modalbody.innerHTML = '<div  style="text-align: center; padding: 20px;"><h1 style="font-size: 32px; font-weight: bold; margin-bottom: 20px;">Something went wrong</h1><p style="font-size: 20px;">Uh-Oh something went wrong<br/> in processing your request</p></div>';
+                    } else {
+                        
+                        button2.innerHTML = 'Deny';
+                        button2.classList.remove('btn-dark');
+                        button2.classList.add('btn-danger');
+                        
+                        const modalbody = document.querySelector(docs);
+                        if (!modalbody) {
+                            console.log("no eemmnt")
+                        }
+                        modalbody.innerHTML = '';
+                        modalbody.innerHTML = '<div  style="text-align: center; padding: 20px;"><h1 style="font-size: 32px; font-weight: bold; margin-bottom: 20px;">Something went wrong</h1><p style="font-size: 20px;">Uh-Oh something went wrong<br/> in processing your request</p></div>';
+                    }
+
+
+                }, 3000)
+                setTimeout(() => {
+                    location.reload();
+                }, 1200)
+
+            }
+        }
+
+        xhr.send(params);
+    }
+</script>
+

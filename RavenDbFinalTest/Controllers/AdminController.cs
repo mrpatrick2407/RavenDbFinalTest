@@ -58,37 +58,37 @@ namespace RavenDbFinalTest.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Action(string id,bool check)
-        {   
-            var fid = Int16.Parse(id);
+        public async Task<IActionResult> Action(int id,bool check)
+        {
+            if (id==null || id==0)
+            {
+                return BadRequest();
+            }
+            Console.WriteLine(id.GetType().Name+" "+id);
+            Console.WriteLine(check.GetType().Name + " " + check);
+
+            //var fid = Int16.Parse(id);
             var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
             var graphqlreq = new GraphQLHttpRequest
             {
-                Query = @"",
-                Variables = new { id = fid, check = check }
+                Query = @"query example ($eid:Int!,$val:Boolean!){
+                  getemployeereq(id: $eid,val: $val)
+                }",
+                Variables = new { eid = id, val = check }
             };
             try
             {
-                await client.SendQueryAsync<dynamic>(graphqlreq);
-                if (check)
-                {
-                    TempData["SuccessMessage"] = "Approved successfully";
-
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "Denied successfully";
-
-                }
+                await client.SendQueryAsync<dynamic>(graphqlreq);   
+                return Ok();
 
             }
             catch (Exception e)
             {
-                TempData["SuccessMessage"] = "Uh-Oh Something Went Wrong ";
-
+                
+                return BadRequest();
             }
 
-            return View();
+           
         }
         public async Task<IActionResult> AdminRequest()
         {
@@ -97,8 +97,16 @@ namespace RavenDbFinalTest.Controllers
             {
                 Query = @"query{
                     allemployeereq{
-                    id
                     firstName
+                    lastName
+                    department
+                    manager
+                    address
+                    phone_Number
+                    job_Title
+                    email
+                    eid
+                    id
                   }
                 }",
 

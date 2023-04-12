@@ -13,15 +13,27 @@ namespace RavenDbFinalTest.Graphql
             store = documentStore;
         }
 
-        public Productcs setproducts(string name, int pr)
+        public Product setproducts(string name, int pr)
         {
-            using (var session = store.OpenSession())
-
+            try
             {
-                var products = new Productcs { Price = pr, Name = name };
-                session.Store(products);
-                session.SaveChanges();
-                return products;
+                using (var session = store.OpenSession())
+
+                {
+                    var productId = "products/" + Guid.NewGuid().ToString();
+                    
+                    var products = new Product { Id = productId, Price = pr, Name = name };
+                    
+                    session.Store(products);
+                    session.SaveChanges();
+                    return products;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+
+                return new Product { Price = 121 };
             }
         }
 

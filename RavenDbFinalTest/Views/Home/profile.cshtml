@@ -150,7 +150,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-secondary w-auto" type="button" id="edit-button" disabled>Edit</button>
+                                <button style="width:100px;" class="btn btn-secondary "  type="button" id="edit-button" >Edit</button>
                             }
 
                         </div>
@@ -173,21 +173,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.js" integrity="sha512-LjPH94gotDTvKhoxqvR5xR2Nur8vO5RKelQmG52jlZo7SwI5WLYwDInPn1n8H9tR0zYqTqfNxWszUEy93cHHwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    /*
+    
     const editButton = document.getElementById("edit-button");
     const inputFields = document.querySelectorAll("input:not(#email):not(#firstName):not(#lastName)");
 
     editButton.addEventListener("click", () => {
+        const isEditable = editButton.textContent === "Edit";
         inputFields.forEach((input) => {
-            if(editButton.textContent==="Edit"){
-                editButton.textContent="Cancel";
-            }else{
-                editButton.textContent="Edit";
-            }
+            
             input.readOnly = !input.readOnly;
         });
+        editButton.textContent=isEditable?"Cancel":"Edit";
     });
-    */
+    
 </script>
 
 
