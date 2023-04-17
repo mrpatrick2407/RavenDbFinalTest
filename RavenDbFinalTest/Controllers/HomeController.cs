@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.SignalR;
 using System.Drawing;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using System.Text;
+using System.Net;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -147,19 +149,8 @@ namespace RavenDbFinalTest.Controllers
             }
         }
 
- /*       public async Task<IActionResult> Verygood(string otp,string email2,string userotp)
-        {
-            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint =new Uri("https://localhost:7000/graphql" )}, new NewtonsoftJsonSerializer());
-            var graphqlreq = new GraphQLRequest {
-                Query= @"query ExampleQuery($email:String!){
-             roleCheck(email: $email)
-            }",Variables=new { email = email2 }
-            };
-            var res = await client.SendQueryAsync<dynamic>(graphqlreq);
-            Console.WriteLine(res);
-            return Json(res);
-        }
- */
+ 
+
         public int Otp { get; set; }
         [HttpPost]
         public async Task<IActionResult> LoginAuth( string email2, int userotp)
@@ -335,55 +326,82 @@ namespace RavenDbFinalTest.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(string imageFile)
         {
-            /*//professionalism check code begins
-            byte[] imageBytes = Convert.FromBase64String(imageFile);
+            //professionalism check code begins
+            /* byte[] imageBytes = Convert.FromBase64String(imageFile);
 
-            var file = new FormFile(new MemoryStream(imageBytes), 0, imageBytes.Length, "Image", "image.jpg")
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = "image/jpeg"
-            };
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest("Please select an image file");
-            }
-            
-
-            
-            var fileName = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
-            var filePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+             var file = new FormFile(new MemoryStream(imageBytes), 0, imageBytes.Length, "Image", "image.jpg")
+             {
+                 Headers = new HeaderDictionary(),
+                 ContentType = "image/jpeg"
+             };
+             if (file == null || file.Length == 0)
+             {
+                 return BadRequest("Please select an image file");
+             }
 
 
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
+             var fileName = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+             var filePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+
+
+             using (var stream = new FileStream(filePath, FileMode.Create))
+             {
+                 await file.CopyToAsync(stream);
+             }
 
 
 
             var imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/images/{fileName}";
-            var httpClient = new HttpClient();
+
+             var httpClient = new HttpClient();
 
 
 
-            // set the authorization header
-            var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes("4Dl0Qmtxsme9lHWFrnajXxcl:qcLwSHZ8Yl3Az7uWH8Zh3kNn9iiuiEi6x4a90PNil6Qi4G6w"));
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+             // set the authorization header
+             var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes("pJ6eK0PrXOeT4nzhhbmCYOMJ:zz5iH6llonMGmV02WrThUfYz719nfqoMZbmLTbmFuiLtApZ4"));
+             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+             Console.WriteLine("Credentials  " + credentials+"   ");
+
+
+             // send the request using HttpClient
+             var response = await httpClient.GetAsync("https://api.everypixel.com/v1/quality_ugc?url=https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg");
 
 
 
-            // send the request using HttpClient
-            var response = await httpClient.GetAsync("https://api.everypixel.com/v1/quality_ugc?url="+imageUrl);
-
-
-
-            // read the response content as a string
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseContent);
-            Console.WriteLine(imageUrl);
-            return Content(responseContent);*/
+             // read the response content as a string
+             var responseContent = await response.Content.ReadAsStringAsync();
+             Console.WriteLine(responseContent);
+            // Console.WriteLine(imageUrl);
+             return Content(responseContent);
             //professionalism check code ends
+            // construct the image file from the Base64-encoded image data
+            using (var client = new HttpClient())
+            {
+                var username = "pJ6eK0PrXOeT4nzhhbmCYOMJ";
+                var password = "zz5iH6llonMGmV02WrThUfYz719nfqoMZbmLTbmFuiLtApZ4";
+                var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                var imageBytes = Convert.FromBase64String(imageFile);
+
+                using (var content = new MultipartFormDataContent())
+                {
+                    var imageContent = new ByteArrayContent(imageBytes);
+                    imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+                    content.Add(imageContent, "image", "image.jpg");
+
+                    var response = await client.PostAsync("https://api.everypixel.com/v1/keywords", content);
+                    var responseString = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine(responseString);
+                    return Content(responseString);
+                }
+            }
+            */
+
 
             Console.WriteLine("Image file" + imageFile);
             
@@ -493,7 +511,7 @@ namespace RavenDbFinalTest.Controllers
                     };
                     var response=await client.SendQueryAsync<dynamic>(request);
                     bool requestsexist=response.Data.getadminreq;
-                    Console.WriteLine("Idhu vandhu inga request"+requestsexist);
+                   // Console.WriteLine("Idhu vandhu inga request"+requestsexist);
                     if (requestsexist)
                     {
                         ViewBag.successmessage = "Requested!";
@@ -571,7 +589,7 @@ namespace RavenDbFinalTest.Controllers
         public async Task<IActionResult> GetImage(string id)
         {
             int oid = Int16.Parse(id);
-            Console.WriteLine("this is oid" + oid + "eid:" + id);
+            //Console.WriteLine("this is oid" + oid + "eid:" + id);
             var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
             var graphqlreq = new GraphQLRequest
             {
@@ -586,8 +604,8 @@ namespace RavenDbFinalTest.Controllers
             };
             var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
             var user = req.Data.getimage;
-            Console.WriteLine(user.firstName);
-            Console.WriteLine(user.imageBase64.GetType().Name);
+            //Console.WriteLine(user.firstName);
+            //Console.WriteLine(user.imageBase64.GetType().Name);
            
 
             if (user.imageBase64 != null)

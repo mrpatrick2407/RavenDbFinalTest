@@ -1,0 +1,70 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var logins = ViewBag.Login;
+    foreach(var  login in logins)
+    {
+        Console.WriteLine($"Email:{login.EmailAddress}");
+    }
+}
+<div>
+    <canvas id="myChart" height="1000px;" width="1000px"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var logins = @Html.Raw(Json.Serialize(ViewBag.Login));
+
+    var loginData = {
+        labels: [],
+        datasets: [{
+            label: 'Login Time',
+            data: [],
+            borderColor: 'blue',
+            fill: false
+        },
+        {
+            label: 'Login Fime',
+            data: [],
+            borderColor: 'red',
+            backgroundColor: 'red',
+            fill: false
+        }]
+    };
+
+    for (var i = logins.length-1; i >0; i--) {
+        var login = logins[i];
+        var loginDateTime = new Date(login.loginTime);
+        var loginDate = loginDateTime.toDateString();
+        // extract date from LoginTime
+        var loginTime = loginDateTime.getHours() + (loginDateTime.getMinutes() / 60);// extract time from LoginTime
+        loginData.labels.push(loginDate);
+        loginData.datasets[0].data.push(loginTime);
+    }
+    for (var i = 0; i < logins.length; i++) {
+        var login = logins[i];
+        var loginDateTime = new Date(login.loginTime);
+        var loginDate = loginDateTime.toDateString();
+        // extract date from LoginTime
+        var loginTime = loginDateTime.getHours() + (loginDateTime.getMinutes() / 60);// extract time from LoginTime
+       
+        loginData.datasets[1].data.push(loginTime);
+    }
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        responsive:true,
+        type: 'line',
+        data: loginData,
+        options: {
+            scales: {
+                y: {
+                    stacked:true,
+                    beginAtZero: true
+                }
+            }
+        }
+
+    });
+</script>
+
