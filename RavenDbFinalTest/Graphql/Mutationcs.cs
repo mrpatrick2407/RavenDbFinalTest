@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Operations.Attachments;
 using RavenDbFinalTest.Models;
+using System.Net.Http.Headers;
+
 namespace RavenDbFinalTest.Graphql
 {
     public class Mutationcs
@@ -12,6 +14,37 @@ namespace RavenDbFinalTest.Graphql
         {
             store = documentStore;
         }
+
+
+
+        [GraphQLName("CheakImage")]
+        public async Task<string> CheckImageAsync(string image)
+        {
+            // Convert base64 image string to byte array
+            byte[] imageBytes = Convert.FromBase64String(image);
+
+            // Create HTTP client
+            HttpClient httpClient = new HttpClient();
+
+            // accesstoken
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "NERsMFFtdHhzbWU5bEhXRnJuYWpYeGNsOnFjTHdTSFo4WWwzQXo3dVdIOFpoM2tObjlpaXVpRWk2eDRhOTBQTmlsNlFpNEc2dw==");
+
+            // Create multipart form data content
+            MultipartFormDataContent content = new MultipartFormDataContent();
+            ByteArrayContent imageContent = new ByteArrayContent(imageBytes);
+            content.Add(imageContent, "data", "image.jpg");
+
+            // Send POST request
+            HttpResponseMessage response = await httpClient.PostAsync("https://api.everypixel.com/v1/quality_ugc", content);
+
+            // Read response content
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            return responseContent;
+        }
+
+
 
         public Product setproducts(string name, int pr)
         {

@@ -103,12 +103,24 @@ left:-20px;">
 
         xhr.onload = function () {
             if (xhr.status === 200) {
+
+                console.log(xhr.responseText);
+
                 if (xhr.responseText == "Invalid OTP") {
-                    error.innerText = "Please Enter Valid OTP";
-                } else {
-                    window.location.href = "https://localhost:7000/home/LoginAuth?email2=" + emailval;
+
+                    error.innerText = "Please Enter the Valid OTP";
                 }
-            } else {
+                else {
+                    if (xhr.responseText == "Expired OTP") {
+
+                        error.innerText = "Expired OTP";
+                    }
+                    else {
+                        window.location.href = "https://localhost:7000/home/LoginAuth?email2=" + emailval;
+                    }
+                }
+            }
+            else {
                 console.log('Error: ' + xhr.status);
             }
         };

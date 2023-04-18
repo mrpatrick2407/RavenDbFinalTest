@@ -20,6 +20,7 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -43,7 +44,7 @@ namespace RavenDbFinalTest.Controllers
 
         public async Task<IActionResult> Index(String email)
         {
-              var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://authentication-nodejs-ettd.onrender.com") }, new NewtonsoftJsonSerializer());
+              var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://new-autentication.onrender.com/") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
                         Query = @"query($email: String){
@@ -155,7 +156,7 @@ namespace RavenDbFinalTest.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginAuth( string email2, int userotp)
         {
-            
+            string suserotp = userotp.ToString();
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -211,22 +212,23 @@ namespace RavenDbFinalTest.Controllers
 
             //New code begins
 
-            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://authentication-nodejs-ettd.onrender.com") }, new NewtonsoftJsonSerializer());
+            var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://new-autentication.onrender.com/") }, new NewtonsoftJsonSerializer());
 
             var Graphlogauth = new GraphQLRequest
             {
-                Query = @"query($userotp: Int){
-                  cred(userotp: $userotp)
+                Query = @"query($userotp: String, $email: String){
+                  cred(userotp: $userotp, email: $email)
                 }",
-                Variables = new { userotp = userotp }
+                Variables = new { userotp = suserotp, email = email2 }
             };
             var logauthres = await client.SendQueryAsync<dynamic>(Graphlogauth);
             string ctoken = logauthres.Data.cred;
-            if(ctoken == "Invalid OTP")
+            if (ctoken == "Invalid OTP" || ctoken == "Expired OTP")
             {
                 Console.WriteLine("If");
                 return Content(ctoken);
-                
+               
+
             }
             else
             {
@@ -236,7 +238,7 @@ namespace RavenDbFinalTest.Controllers
                 return Content("Valid OTP");
 
             }
-           
+
 
 
             /*    //karuppaiah old code begins
@@ -403,9 +405,7 @@ namespace RavenDbFinalTest.Controllers
             */
 
 
-            Console.WriteLine("Image file" + imageFile);
             
-
             //graphqlquery
             int eid = Int16.Parse(HttpContext.Session.GetString("usereid"));
 
@@ -424,15 +424,49 @@ namespace RavenDbFinalTest.Controllers
             string userid = user.id.ToString();
             Console.WriteLine("useridofab" + userid);
 
-         /*         string imageString = "";
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await imageFile.CopyToAsync(memoryStream);
-                        byte[] imageBytes = memoryStream.ToArray();
-                        imageString = Convert.ToBase64String(imageBytes);
-                    }
+            /*         string imageString = "";
+                       using (var memoryStream = new MemoryStream())
+                       {
+                           await imageFile.CopyToAsync(memoryStream);
+                           byte[] imageBytes = memoryStream.ToArray();
+                           imageString = Convert.ToBase64String(imageBytes);
+                       }
 
-        */
+           */
+            //checkimage
+            var graphclient = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+
+            Console.WriteLine(" checek begin");
+            // byte[] imageBytes = Convert.ToByte(imageFile);
+            var imagecheck = new GraphQLRequest
+            {
+                Query = @"mutation example($image:String!){
+              CheakImage(image: $image)
+            }",
+
+                Variables = new { image = imageFile }
+
+            };
+
+            var response = await graphclient.SendQueryAsync<dynamic>(imagecheck);
+
+            string wholescore = response.Data.CheakImage;
+
+            JObject json = JObject.Parse(wholescore);
+            double score = (double)json["quality"]["score"];
+            string Status = "";
+            if (score < 0.6)
+            {
+                //ViewBag.CheckImage = "Try to upload proper image";
+                Status = "Try uploading proper Image";
+            }
+            Console.WriteLine(score);
+            Console.WriteLine("checek end");
+
+
+
+
+
             var imageuploadreq = new GraphQLRequest
             {
                 Query = @"mutation example($image:String!,$userid:String!){
@@ -442,7 +476,16 @@ namespace RavenDbFinalTest.Controllers
             };
            
             await client2.SendQueryAsync<dynamic>(imageuploadreq);
-                return Ok();
+
+
+
+            if (Status != "")
+            {
+
+                return Content(Status);
+            }
+
+            return Ok();
             
            
             
