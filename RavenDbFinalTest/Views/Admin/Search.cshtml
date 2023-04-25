@@ -1,32 +1,24 @@
-﻿
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
 @{
     
 }
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-
-}@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-
-}
 <style>
-    .lefter {
-        height: auto;
-        width: 15%;
-        position: absolute;
-        left: 30px;
-        top: 200px;
+    .lefter{
+        
+        height:auto;
+        width:15%;
+        position:absolute;
+        left:30px;
+        top:200px;
     }
-
-    .righter {
+    .righter{
         height: auto;
         width: 85%;
         position: relative;
         right: -230px;
+        
     }
 </style>
 <!-- Include only the reset -->
@@ -59,7 +51,7 @@
             // if you are authenticating with username/password
             // https://www.searchkit.co/docs/guides/setup-elasticsearch#connecting-with-usernamepassword
             auth: {
-                username: "elastic",
+              username: "elastic",
                 password: "FUTpHUkZKc467OjMr4AU1jba"
             },
             // if you are authenticating with api key
@@ -67,10 +59,10 @@
             // apiKey: "######"
         },
         search_settings: {
-            highlight_attributes: ["name", "role", "email"],
-
+            highlight_attributes: ["name","role","email"],
+            
             search_attributes: [{ field: "name", weight: 3 }, "phone", "emailId"],
-            result_attributes: ["name", "role", "emailId", "eid", "id"],
+            result_attributes: ["name", "role", "emailId","eid","id"],
             facet_attributes: [{
                 field: "name.keyword",
                 type: "string",
@@ -80,7 +72,7 @@
                 type: "string",
                 attribute: "id",
             }],
-
+           
         }
     })
 
@@ -96,7 +88,7 @@
         instantsearch.widgets.refinementList({
             container: "#categories-list",
             attribute: "id",
-
+            
         }),
         instantsearch.widgets.hits({
             container: "#hits",
@@ -105,16 +97,16 @@
             },
             templates: {
                 item: `
-                    <span style="display:block;"> {{{eid}}}</span>
-                        <span style="display:block;"> {{{name}}}</span>
-                        <span style="display:block;"> {{{role}}}</span>
-                        <span style="display:block;"> {{{emailId}}}</span>
-                         <span style="display:block;">
-                            <a href="/admin/editemployee?id={{{id}}}" class="btn btn-sm btn-outline-warning me-2" style="color: #FF9201; border-color: #FF9201;">View</a>
-                            <a href="/admin/deleteemployeebyid?eid={{{eid}}}" class="btn btn-sm btn-danger" style="background-color: #FF9201; border-color: #FF9201;">Delete</a>
-                         </span>
-
-              `}
+                <span style="display:block;"> {{{eid}}}</span>
+                    <span style="display:block;"> {{{name}}}</span>
+                    <span style="display:block;"> {{{role}}}</span>
+                    <span style="display:block;"> {{{emailId}}}</span>
+                     <span style="display:block;">   
+                        <a href="/admin/editemployee?id={{{id}}}" class="btn btn-sm btn-outline-warning me-2" style="color: #FF9201; border-color: #FF9201;">View</a>
+                        <a href="/admin/deleteemployeebyid?eid={{{eid}}}" class="btn btn-sm btn-danger" style="background-color: #FF9201; border-color: #FF9201;">Delete</a>
+                     </span>
+            
+          `}
         }),
         instantsearch.widgets.pagination({
             container: "#pagination"
@@ -123,5 +115,4 @@
 
     search.start();
 </script>
-
 

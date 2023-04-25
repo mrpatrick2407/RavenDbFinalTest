@@ -5,6 +5,9 @@ using RavenDbFinalTest.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Nest;
+using Elastic.Clients.Elasticsearch;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RavenDbFinalTest.Graphql
 {
@@ -12,10 +15,12 @@ namespace RavenDbFinalTest.Graphql
     {
         private readonly IDocumentStore _documentStore;
         private readonly HttpContextAccessor _contextAccessor;
+        private readonly ElasticsearchClient _client;
 
-        public QueryResolver(IDocumentStore documentStore,HttpContextAccessor httpContextAccessor)
+        public QueryResolver(IDocumentStore documentStore,HttpContextAccessor httpContextAccessor, ElasticsearchClient client)
         {
             _documentStore = documentStore;
+            _client = client;
             _contextAccessor = httpContextAccessor;
         }
         
@@ -27,6 +32,31 @@ namespace RavenDbFinalTest.Graphql
                 return session.Query<Company>().Any(e => e.EmailId == email);
             }
         }
+
+        [GraphQLName("pushtoelastic")]
+        public async Task<bool> push()
+        {
+            List<Company> model = new List<Company>();
+
+                using (var session = _documentStore.OpenSession())
+                {
+
+                    model = session.Query<Company>(collectionName: "Companies").ToList();
+                }
+            
+            var response = await _client.IndexManyAsync(model, "company");
+
+            if (response.IsValidResponse)
+            {
+                Console.WriteLine($"Index document with ID {response.Items.First().Id} succeeded.");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         [GraphQLName("getemployee")]
         public Company GetEmployee(string email)
         {            
@@ -118,7 +148,7 @@ namespace RavenDbFinalTest.Graphql
                         var notification = new Notification
                         {
                             Eid = req.eid,
-                            name = new Names
+                            name = new RNames
                             {
                                 FirstName = req.FirstName,
                                 LastName = req.LastName
@@ -149,7 +179,7 @@ namespace RavenDbFinalTest.Graphql
                         var notification = new Notification
                         {
                             Eid = req.eid,
-                            name = new Names
+                            name = new RNames
                             {
                                 FirstName = req.FirstName,
                                 LastName = req.LastName

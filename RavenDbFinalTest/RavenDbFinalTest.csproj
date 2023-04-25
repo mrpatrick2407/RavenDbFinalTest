@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.1.0" />
     <PackageReference Include="GraphQL" Version="7.3.0" />
     <PackageReference Include="GraphQL.Client" Version="5.1.1" />
     <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft" Version="5.1.1" />
@@ -14,6 +15,7 @@
     <PackageReference Include="HotChocolate.AspNetCore.Playground" Version="10.5.5" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.5" />
+    <PackageReference Include="NEST" Version="7.17.5" />
     <PackageReference Include="RavenDB.Client" Version="5.4.101" />
     <PackageReference Include="RavenDB.Server" Version="3.5.9" />
   </ItemGroup>
