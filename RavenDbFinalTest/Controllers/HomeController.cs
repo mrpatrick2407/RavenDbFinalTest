@@ -7,7 +7,6 @@ using RavenDbFinalTest.Models;
 using Raven.Client.Documents;
 using System.IdentityModel.Tokens.Jwt;
 
-
 using GraphQL.Client.Http;
 using GraphQL;
 using GraphQL.Client.Serializer.Newtonsoft;
@@ -22,7 +21,6 @@ using System.Text;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authentication;
-
 namespace RavenDbFinalTest.Controllers
 {
     public class HomeController : Controller
@@ -39,84 +37,178 @@ namespace RavenDbFinalTest.Controllers
         public IActionResult Index()
         {
             return View();
-            
+
         }
         [HttpPost]
 
         public async Task<IActionResult> Index(String email)
         {
-              var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://new-autentication.onrender.com/") }, new NewtonsoftJsonSerializer());
-                var graphqlreq = new GraphQLRequest
-                {
-                        Query = @"query($email: String){
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://new-autentication.onrender.com/") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query($email: String){
                           SendEmailQuery(email: $email)
                         }",
-                    Variables = new { email = email+"@ceiamerica.com" }
-                };
-                var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                Variables = new { email = email + "@ceiamerica.com" }
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
             Console.WriteLine(res);
-                var SendEmailRes = res.Data.SendEmailQuery;
-                if (SendEmailRes == "error")
+            var SendEmailRes = res.Data.SendEmailQuery;
+            if (SendEmailRes == "error")
+            {
+                return Content("Something went wrong");
+            }
+            else
+            {
+                return Content(email + "@ceiamerica.com");
+            }
+            /*  HttpClient client = new HttpClient();
+              var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5000/sendemail");
+              var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("emailID", email + "@ceiamerica.com") });
+              request.Content = content;
+
+              HttpResponseMessage response = await client.SendAsync(request);
+              response.EnsureSuccessStatusCode();
+              // Deserialize the response body to a JSON object
+              string responseBody = await response.Content.ReadAsStringAsync();
+
+
+              var json = JsonSerializer.Deserialize<JsonElement>(responseBody);
+
+              string otp = json.GetProperty("message").GetString();
+
+              ViewBag.Otp = otp;
+              TempData["otp"] = otp;
+              TempData["email"] = email + "@ceiamerica.com";
+              ViewBag.Email = email + "@ceiamerica.com";
+              return Content(otp + "," + email + "@ceiamerica.com");*/
+
+            //Old code ends here
+
+            /*return new ContentResult
+            {
+                Content = otp,
+                ContentType = "text/plain",
+                StatusCode = 200
+            };*/
+            /*string otp = json.GetProperty("otp").GetString();
+            HttpContext.Session.SetString("otp", otp);
+            string myValue = HttpContext.Session.GetString("MyValue");
+            Console.WriteLine("hi");*/
+
+
+            /*if (Otp3.ToString()!= null)
+            {
+                string otp = json.GetProperty("otp").GetString();
+                if (Otp3.ToString() == otp)
                 {
-                    return Content("Something went wrong");
+                    return View("LoginAuth");
                 }
-                else
-                {
-                    return Content(email + "@ceiamerica.com");
+            }*/
+
+            // Extract the OTP value from the JSON object
+            //string otp = json.GetProperty("otp").GetString();
+            //HttpContext.Session.SetString("OTP", otp);
+
+            // Extract the OTP value from the JSON object
+            //string otp = jsonObject.GetProperty("otp").GetString();
+
+
+
+        }
+        public async Task<IActionResult> Notifications(int id, DateTime timestamp)
+        {
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query example($id:Int!,$timestamp:DateTime!){
+          getNotificationsByIdAndTimestamp(id: $id,timestamp: $timestamp){
+            message
+            timestamp
+            id
+            status
+          }
+        }",
+                Variables = new { id = id, timestamp = timestamp }
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            Console.WriteLine(res.Data.getNotificationsByIdAndTimestamp);
+            var messagesList = new List<string>();
+            var idList = new List<string>();
+            var statusList = new List<bool>();
+
+            foreach (var notification in res.Data.getNotificationsByIdAndTimestamp)
+            {
+                string message = notification.message;
+                messagesList.Add(message);
+                string ids = notification.id;
+                idList.Add(ids);
+                bool status1 = notification.status;
+                statusList.Add(status1);
+            }
+
+            var messages = messagesList.ToArray();
+            var list = idList.ToArray();
+            var status = statusList.ToArray();
+
+            return Json(new { messages, list, status });
+        }
+
+        public async Task<IActionResult> NotiDelete(string id)
+        {
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"mutation example($id: String!) {
+                 deletenotificationbyid(id: $id) {
+                 message
+                 }
+                }",
+                Variables = new { id = id }
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+
+
+            return Content("yes");
+
+        }
+        public async Task<IActionResult> NewNotifications(int id, DateTime timestamp)
+        {
+            Console.WriteLine("NOtifcation" + id + "ts" + timestamp.ToString());
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query example($id:Int!,$timestamp:DateTime!){
+                newnotification(id: $id,timestamp: $timestamp){
+                message
+                timestamp
+                id
+                status
                 }
-                /*  HttpClient client = new HttpClient();
-                  var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5000/sendemail");
-                  var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("emailID", email + "@ceiamerica.com") });
-                  request.Content = content;
+                }",
+                Variables = new { id, timestamp }
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            Console.WriteLine(res.Data.newnotification);
+            var messagesList = new List<string>();
+            var idList = new List<string>();
+            var statusList = new List<bool>();
 
-                  HttpResponseMessage response = await client.SendAsync(request);
-                  response.EnsureSuccessStatusCode();
-                  // Deserialize the response body to a JSON object
-                  string responseBody = await response.Content.ReadAsStringAsync();
+            foreach (var notification in res.Data.newnotification)
+            {
+                string message = notification.message;
+                messagesList.Add(message);
+                string ids = notification.id;
+                idList.Add(ids);
+                bool status1 = notification.status;
+                statusList.Add(status1);
+            }
 
+            var messages = messagesList.ToArray();
+            var list = idList.ToArray();
+            var status = statusList.ToArray();
 
-                  var json = JsonSerializer.Deserialize<JsonElement>(responseBody);
-
-                  string otp = json.GetProperty("message").GetString();
-
-                  ViewBag.Otp = otp;
-                  TempData["otp"] = otp;
-                  TempData["email"] = email + "@ceiamerica.com";
-                  ViewBag.Email = email + "@ceiamerica.com";
-                  return Content(otp + "," + email + "@ceiamerica.com");*/
-
-//Old code ends here
-
-                /*return new ContentResult
-                {
-                    Content = otp,
-                    ContentType = "text/plain",
-                    StatusCode = 200
-                };*/
-                /*string otp = json.GetProperty("otp").GetString();
-                HttpContext.Session.SetString("otp", otp);
-                string myValue = HttpContext.Session.GetString("MyValue");
-                Console.WriteLine("hi");*/
-
-
-                /*if (Otp3.ToString()!= null)
-                {
-                    string otp = json.GetProperty("otp").GetString();
-                    if (Otp3.ToString() == otp)
-                    {
-                        return View("LoginAuth");
-                    }
-                }*/
-
-                // Extract the OTP value from the JSON object
-                //string otp = json.GetProperty("otp").GetString();
-                //HttpContext.Session.SetString("OTP", otp);
-
-                // Extract the OTP value from the JSON object
-                //string otp = jsonObject.GetProperty("otp").GetString();
-
-
-           
+            return Json(new { messages, list, status });
         }
 
         [HttpPost]
@@ -140,28 +232,28 @@ namespace RavenDbFinalTest.Controllers
 
                 var graphQLResponse = await client.SendQueryAsync<dynamic>(graphQLRequest);
                 bool emailExistsInGraphQL = graphQLResponse.Data.emailExists;
-                
+
                 return Json(emailExistsInGraphQL);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                
+
                 return BadRequest();
             }
         }
 
- 
+
 
         public int Otp { get; set; }
         [HttpPost]
-        public async Task<IActionResult> LoginAuth( string email2, int userotp)
+        public async Task<IActionResult> LoginAuth(string email2, int userotp)
         {
             string suserotp = userotp.ToString();
-                var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-                var graphqlreq = new GraphQLRequest
-                {
-                    Query = @"query example($email:String!){
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query example($email:String!){
                   getemployee(email: $email) {
                   emailId
                   role
@@ -169,46 +261,47 @@ namespace RavenDbFinalTest.Controllers
                 eid
                   }
                 }",
-                    Variables = new { email = email2 }
-                };
-                var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
-                var user = res.Data.getemployee;
-            
-                string username = user.name;
-                string usereid = user.eid;
-                string emailid=user.emailId;
+                Variables = new { email = email2 }
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            var user = res.Data.getemployee;
+
+            string username = user.name;
+            string usereid = user.eid;
+            string emailid = user.emailId;
             globaleid = Int16.Parse(usereid);
- 
-            Console.WriteLine("This is global"+globaleid);
-                HttpContext.Session.SetString("username", username);
-                HttpContext.Session.SetString("usereid", usereid);
-                HttpContext.Session.SetString("useremailid", emailid);
+
+            Console.WriteLine("This is global" + globaleid);
+            HttpContext.Session.SetString("username", username);
+            HttpContext.Session.SetString("usereid", usereid);
+            HttpContext.Session.SetString("useremailid", emailid);
 
             if (user.role == "Admin")
+            {
+                ViewBag.RoleMessage = $"{user.Name}, You are Admin";
+            }
+            else if (user.role == "Employee")
+            {
+
+
+                ViewBag.RoleMessage = $"{user.Name}, You are Employee";
+                var loginactivity = new GraphQLRequest
                 {
-                    ViewBag.RoleMessage = $"{user.Name}, You are Admin";
-                }else if (user.role == "Employee")
-                {
-                   
-                    
-                    ViewBag.RoleMessage = $"{user.Name}, You are Employee";
-                    var loginactivity = new GraphQLRequest
-                    {
-                        Query = @"mutation example($email:String!){
+                    Query = @"mutation example($email:String!){
                   savelogin(email: $email) {
                     
                     loginTime
                     
                   }
                 }",
-                        Variables = new { email = email2}
-                    };
-                    var logres =await client2.SendQueryAsync<dynamic>(loginactivity);
-                    var reponse = logres.Data.savelogin;
+                    Variables = new { email = email2 }
+                };
+                var logres = await client2.SendQueryAsync<dynamic>(loginactivity);
+                var reponse = logres.Data.savelogin;
 
-               
-                   
-                }
+
+
+            }
 
 
             //New code begins
@@ -228,14 +321,12 @@ namespace RavenDbFinalTest.Controllers
             {
                 Console.WriteLine("If");
                 return Content(ctoken);
-               
 
             }
             else
             {
                 Console.WriteLine("Else");
                 HttpContext.Session.SetString("cToken", ctoken);
-                
                 string myValue = HttpContext.Session.GetString("cToken");
                 return Content("Valid OTP");
 
@@ -407,7 +498,9 @@ namespace RavenDbFinalTest.Controllers
             */
 
 
-            
+            // Console.WriteLine("Image file" + imageFile);
+
+
             //graphqlquery
             int eid = Int16.Parse(HttpContext.Session.GetString("usereid"));
 
@@ -422,19 +515,19 @@ namespace RavenDbFinalTest.Controllers
                 Variables = new { id = eid }
             };
             var req = await client2.SendQueryAsync<dynamic>(graphqlreq);
-            var user = req.Data.getemployeebyid; 
+            var user = req.Data.getemployeebyid;
             string userid = user.id.ToString();
             Console.WriteLine("useridofab" + userid);
 
             /*         string imageString = "";
-                       using (var memoryStream = new MemoryStream())
-                       {
-                           await imageFile.CopyToAsync(memoryStream);
-                           byte[] imageBytes = memoryStream.ToArray();
-                           imageString = Convert.ToBase64String(imageBytes);
-                       }
+                          using (var memoryStream = new MemoryStream())
+                          {
+                              await imageFile.CopyToAsync(memoryStream);
+                              byte[] imageBytes = memoryStream.ToArray();
+                              imageString = Convert.ToBase64String(imageBytes);
+                          }
 
-           */
+              */
             //checkimage
             var graphclient = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
 
@@ -465,47 +558,45 @@ namespace RavenDbFinalTest.Controllers
             Console.WriteLine(score);
             Console.WriteLine("checek end");
 
-
-
-
-
             var imageuploadreq = new GraphQLRequest
             {
                 Query = @"mutation example($image:String!,$userid:String!){
                   storeImageAsync(image: $image,userid :$userid)
                 }",
-                Variables = new { image = imageFile,userid=userid }
+                Variables = new { image = imageFile, userid = userid }
             };
-           
+
             await client2.SendQueryAsync<dynamic>(imageuploadreq);
-
-
-
             if (Status != "")
             {
 
                 return Content(Status);
             }
             return Ok();
- 
+
+
+
+
+
+
         }
 
-        
+
 
 
 
         public async Task<IActionResult> LoginAuth(string email2)
-        {   
+        {
             try
             {
-                    string Token = HttpContext.Session.GetString("cToken");
-                    string useremail= HttpContext.Session.GetString("useremailid");
-                    if(Token!=null && useremail==email2)
+                string Token = HttpContext.Session.GetString("cToken");
+                string useremail = HttpContext.Session.GetString("useremailid");
+                if (Token != null && useremail == email2)
+                {
+                    var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+                    var graphqlreq = new GraphQLRequest
                     {
-                        var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-                        var graphqlreq = new GraphQLRequest
-                        {
-                            Query = @"query example($email:String!){
+                        Query = @"query example($email:String!){
                               getemployee(email: $email) {
                               emailId
                               role
@@ -513,49 +604,50 @@ namespace RavenDbFinalTest.Controllers
                               eid
                               }
                             }",
-                            Variables = new { email = email2 }
-                        };
-                        var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
-                        var user = res.Data.getemployee;
-                        
-                        return View();
-                    }
+                        Variables = new { email = email2 }
+                    };
+                    var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+                    var user = res.Data.getemployee;
+
+                    return View();
+                }
                 else
                 {
                     return View("Error");
                 }
-                
-            }catch (Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return Redirect("Index");
             }
-            
+
         }
 
         public async Task<IActionResult> profile(string id)
         {
             int eid = Int16.Parse(id);
-          // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
+            // int usereid =Int16.Parse( HttpContext.Session.GetString("usereid"));
             if (true)
             {
 
                 var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
-                    var request = new GraphQLRequest
-                    {
-                        Query = @"query example($id:Int!){
+                var request = new GraphQLRequest
+                {
+                    Query = @"query example($id:Int!){
                           getadminreq(id: $id) 
                         }",
-                        Variables = new { id = eid }
-                    };
-                    var response=await client.SendQueryAsync<dynamic>(request);
-                    bool requestsexist=response.Data.getadminreq;
-                   // Console.WriteLine("Idhu vandhu inga request"+requestsexist);
-                    if (requestsexist)
-                    {
-                        ViewBag.successmessage = "Requested!";
-                    }
-                
+                    Variables = new { id = eid }
+                };
+                var response = await client.SendQueryAsync<dynamic>(request);
+                bool requestsexist = response.Data.getadminreq;
+                // Console.WriteLine("Idhu vandhu inga request"+requestsexist);
+                if (requestsexist)
+                {
+                    ViewBag.successmessage = "Requested!";
+                }
+
                 var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
                 var graphqlreq = new GraphQLRequest
                 {
@@ -582,13 +674,12 @@ namespace RavenDbFinalTest.Controllers
             {
                 return View("Error");
             }
-            
+
         }
 
         [HttpPost]
         public async Task<ActionResult> Edit(Profile2 model)
         {
-
             string eid = HttpContext.Session.GetString("usereid");
             int eid2 = Int16.Parse(eid);
             model.eid = eid2;
@@ -598,15 +689,15 @@ namespace RavenDbFinalTest.Controllers
             new NewtonsoftJsonSerializer());
             var graphqlreq = new GraphQLRequest
             {
-                Query = @"mutation example($test:Profile2Input!){
-                  editdata (data: $test){
-                    firstName
-                  }
+                Query = @" mutation example($test:Profile2Input!){
+                editdata (data: $test){
+                firstName
+                }
                 }",
                 Variables = new
                 {
                     test = new
-                    {   
+                    {
                         model.eid,
                         model.FirstName,
                         model.LastName,
@@ -646,7 +737,7 @@ namespace RavenDbFinalTest.Controllers
             var user = req.Data.getimage;
             //Console.WriteLine(user.firstName);
             //Console.WriteLine(user.imageBase64.GetType().Name);
-           
+
 
             if (user.imageBase64 != null)
             {
@@ -663,7 +754,7 @@ namespace RavenDbFinalTest.Controllers
             }
 
         }
-       
+
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("cToken");

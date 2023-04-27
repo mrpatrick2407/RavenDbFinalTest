@@ -13,91 +13,324 @@
     <title>@ViewData["Title"] - EmployeePortal_UI</title>
     <link rel="stylesheet" href="~/mdb5-free-standard/css/mdb.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://kit.fontawesome.com/ef9a7ab452.js" crossorigin="anonymous"></script>
+    <script>
+        const notificationSound = document.getElementById('myAudio');
+        function notification() {
+            //alert("n");
+            var id = @Int16.Parse(eid);
+            console.log("this is id" + id);
+            var timestamp = new Date().toISOString();
+            // alert(timestamp);
+            var xhr = new XMLHttpRequest();
+            var params = 'id=' + id + '&timestamp=' + timestamp;
+            xhr.open('GET', '/Home/Notifications?' + params);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = xhr.responseText;
+                    // alert(response);
+                    const items = JSON.parse(response);
+                    const id = items.list;
+                    //alert(id);
+                    const message = items.messages;
+                    const status1 = items.status;
+                    alert(message);
+                    const alertContainer = document.getElementById('alert-container');
+                    // Loop through the items and create a new alert container div for each one
+
+
+
+                    //changinging items to items.messages
+                    items.messages.forEach((item, index) => {
+                        // Create the alert container div element
+                        const alertContainerDiv = document.createElement('div');
+                        alertContainerDiv.classList.add('alert', 'd-flex', 'justify-content-between', 'align-items-center');
+                        if (status1[index] === true) {
+                            alertContainerDiv.classList.add('alert-success');
+                        } else {
+                            alertContainerDiv.classList.add('alert-error');
+                        }
+
+
+
+                        // Create a child div for the item
+                        const itemDiv = document.createElement('div');
+                        itemDiv.textContent = message[index];
+                        alertContainerDiv.appendChild(itemDiv);
+
+
+
+                        // Create a close button element
+                        const closeButton = document.createElement('button');
+                        closeButton.classList.add('alert-close-btn');
+                        closeButton.classList.add('btn-close');
+                        closeButton.setAttribute('type', 'button');
+                        closeButton.setAttribute('aria-label', 'Close');
+
+
+
+                        // Attach a click event listener to the close button to remove the alert container div
+                        closeButton.addEventListener('click', () => {
+                            alertContainer.removeChild(alertContainerDiv);
+                            alert(id[index]);
+                            var xhr = new XMLHttpRequest();
+                            var params = 'id=' + id[index];
+                            xhr.open('GET', '/Home/NotiDelete?' + params);
+                            xhr.setRequestHeader('Content-type', 'application/json');
+                            xhr.onload = function () {
+                                if (xhr.status === 200) {
+                                    alert(xhr.responseText);
+                                }
+                                else {
+                                    console.log('Error: ' + xhr.status);
+                                }
+                            }
+                            xhr.send();
+                            // window.location.href = "https://localhost:7000/home/notidelete?id=" + id[index];
+
+                        });
+
+
+
+                        // Add the close button to the alert container div
+                        alertContainerDiv.appendChild(closeButton);
+
+
+
+                        // Append the alert container div to the container element
+                        alertContainer.appendChild(alertContainerDiv);
+                    });
+
+
+
+
+
+                } else {
+                    console.log('Error: ' + xhr.status);
+                }
+            }
+            xhr.send();
+        }
+
+        function removeoldData() {
+            const alertContainer = document.getElementById('alert-container');
+            alertContainer.innerHTML = "";
+            const notificationCount = document.getElementById('notification-count');
+            notificationCount.textContent = '0';
+            notificationCount.style.display = 'none';
+        }
+
+
+        function newnotification() {
+            var id = @Int16.Parse(eid);
+            console.log("this is id" + id);
+            var timestamp = new Date(Date.now() - 10000).toISOString();
+            // alert(timestamp);
+            var xhr = new XMLHttpRequest();
+            var params = 'id=' + id + '&timestamp=' + timestamp;
+            xhr.open('GET', '/Home/NewNotifications?' + params);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = xhr.responseText;
+                    // alert(response);
+                    const items = JSON.parse(response);
+                    const id = items.list;
+                    //alert(id);
+                    const message = items.messages;
+                    const status1 = items.status;
+                    //alert(message);
+                    const alertContainer = document.getElementById('alert-container');
+                    // Loop through the items and create a new alert container div for each one
+
+
+
+                    //changinging items to items.messages
+                    items.messages.forEach((item, index) => {
+                        // increment the count
+                        const notificationCount = document.getElementById('notification-count');
+                        const currentCount = parseInt(notificationCount.textContent);
+                        notificationCount.textContent = currentCount + 1;
+                        notificationCount.style.display = 'inline-block';
+                        const alertContainer = document.getElementById('alert-container');
+                        // Create the alert container div element
+                        const alertContainerDiv = document.createElement('div');
+                        alertContainerDiv.classList.add('alert', 'd-flex', 'justify-content-between', 'align-items-center');
+                        if (status1[index] === true) {
+                            alertContainerDiv.classList.add('alert-success');
+                        } else {
+                            alertContainerDiv.classList.add('alert-error');
+                        }
+
+
+
+                        // Create a child div for the item
+                        const itemDiv = document.createElement('div');
+                        itemDiv.textContent = message[index];
+                        alertContainerDiv.appendChild(itemDiv);
+
+
+
+                        // Create a close button element
+                        const closeButton = document.createElement('button');
+                        closeButton.classList.add('alert-close-btn');
+                        closeButton.classList.add('btn-close');
+                        closeButton.setAttribute('type', 'button');
+                        closeButton.setAttribute('aria-label', 'Close');
+
+
+
+                        // Attach a click event listener to the close button to remove the alert container div
+                        closeButton.addEventListener('click', () => {
+                            alertContainer.removeChild(alertContainerDiv);
+                            //alert(id[index]);
+                            var xhr = new XMLHttpRequest();
+                            var params = 'id=' + id[index];
+                            xhr.open('GET', '/Home/NotiDelete?' + params);
+                            xhr.setRequestHeader('Content-type', 'application/json');
+                            xhr.onload = function () {
+                                if (xhr.status === 200) {
+                                    alert(xhr.responseText);
+                                }
+                                else {
+                                    console.log('Error: ' + xhr.status);
+                                }
+                            }
+                            xhr.send();
+                            // window.location.href = "https://localhost:7000/home/notidelete?id=" + id[index];
+
+                        });
+
+
+
+                        // Add the close button to the alert container div
+                        alertContainerDiv.appendChild(closeButton);
+
+
+
+                        // Append the alert container div to the container element
+                        alertContainer.insertBefore(alertContainerDiv, alertContainer.firstChild);
+                        const notificationSound = document.getElementById('myAudio');
+                        notificationSound.play();
+                    });
+
+
+
+
+
+                } else {
+                    console.log('Error: ' + xhr.status);
+                }
+            }
+            xhr.send();
+        }
+
+        setInterval(newnotification, 10000);
+
+    </script>
 </head>
 <body style="background-color:#ECECF2">
-    <header>    <!-- Navbar -->  
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">        <!-- Container wrapper -->    
-            <div class="container-fluid">            <!-- Toggle button -->    
-                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">       
-                    <i class="fas fa-bars"></i>           
-                </button>            <!-- Collapsible wrapper -->    
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <a class="navbar-brand mt-2 mt-lg-0 mx-5"  href="https://localhost:7000/Home/LoginAuth?email2=@email">
-                        <img src="https://ok12static.oktacdn.com/fs/bco/1/fs055r3ijj5Xaoifk5d7" height="40" alt=" Logo" loading="lazy" />  
-                  </a>                <!-- Left links -->                <!-- Left links -->   
-                 </div>            <!-- Collapsible wrapper -->            <!-- Right elements -->     
-                 <div class="d-flex align-items-center">                <!-- Icon -->                <!-- Notifications -->
-                    <a asp-controller="Home" asp-action="Logout">
-                        <button type="button" class="btn mx-2" style="border-radius:10px;background-color:#FF9201;"><h style="color:whitesmoke;">Logout</h></button>
-                    </a>  
-                    <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>
-                    <a class=" d-flex align-items-center " href="@Url.Action("Profile",new { id = eid })" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                        <img height="50px" width="50px"  src=" @Url.Action("GetImage", new { id = eid })" style="border-radius:50%;" class="" height="55" alt="Black and White Portrait of a Man" loading="lazy" />
-                    </a>         
-                  </div>            <!-- Right elements -->     
-            
-                  </div>        <!-- Container wrapper -->  
-                  </nav>
-        
-        <nav style="background-color:#151566;" class="navbar navbar-expand-lg navbar-light ">
+    <header>
+        <!-- Navbar -->
+        <audio id="myAudio" src="~/notification_sound.mp3" )"></audio>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <!-- Container wrapper -->
             <div class="container-fluid">
                 <!-- Toggle button -->
-                <button class="navbar-toggler"
-                                               type="button"
-                                               data-mdb-toggle="collapse"
-                                               data-mdb-target="#navbarSupportedContent"
-                                               aria-controls="navbarSupportedContent"
-                                               aria-expanded="false"
-                                               aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars"></i>
-                </button>                 <!-- Collapsible wrapper -->
+                </button>            <!-- Collapsible wrapper -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Navbar brand -->
-                    <!-- Left links -->
-                    <!-- Left links -->
-                </div>
-                <!-- Collapsible wrapper -->
-                <!-- Right elements -->
+                    <a class="navbar-brand mt-2 mt-lg-0 mx-5" href="https://localhost:7000/Home/LoginAuth?email2=@email">
+                        <img src="https://ok12static.oktacdn.com/fs/bco/1/fs055r3ijj5Xaoifk5d7" height="40" alt=" Logo" loading="lazy" />
+                    </a>                <!-- Left links -->                <!-- Left links -->
+                </div>            <!-- Collapsible wrapper -->            <!-- Right elements -->
                 <div class="d-flex align-items-center">
-                    <!-- Notifications -->
-                    <div class="dropdown ">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item ">
-                                <a class="nav-link text-white" href="#">Leave</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="#">Benefits</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="#">Payroll</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="#">Events</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="#">Dashboard</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Avatar -->                
-                </div>
-                <!-- Right elements -->
-            </div>
-            <!-- Container wrapper -->
+                    <!-- Icon -->                <!-- Notifications -->
+                    <a asp-controller="Home" asp-action="Logout">
+                        <button type="button" class="btn mx-2" style="border-radius:10px;background-color:#FF9201;"><h style="color:whitesmoke;">Logout</h></button>
+                    </a>
+                    <button type="button" class="btn mx-2"><h style="color:#FF9201;">@rolemessage</h></button>
+                    <i class="fas fa-bell mdb-icon" style="color:#FF9201;padding:15px;font-size:25px; right:10px;" data-bs-toggle="offcanvas" onclick="notification();" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" id="notification-bell"><span id="notification-count" style="display:none">0</span></i>
+                    <a class=" d-flex align-items-center " href="@Url.Action("Profile",new { id = eid })" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+                        <img height="50px" width="50px" src=" @Url.Action("GetImage", new { id = eid })" style="border-radius:50%;" class="" height="55" alt="Black and White Portrait of a Man" loading="lazy" />
+                    </a>
+                </div>            <!-- Right elements -->
+
+            </div>        <!-- Container wrapper -->
         </nav>
 
+        <nav style="background-color:#151566;" class="navbar navbar-expand-lg navbar-light ">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+            <!-- Toggle button -->
+
+
+
+            <a class="navbar-brand text-white" href="#">BrandName</a>
+
+
+
+            <button class="navbar-toggler"
+                                           type="button"
+                                           data-mdb-toggle="collapse"
+                                           data-mdb-target="#navbarNav"
+                                           aria-controls="navbarNav"
+                                           aria-expanded="false"
+                                           aria-label="Toggle navigation">
+                <i class="fas fa-bars text-white float-left"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <ul class="navbar-nav float-left me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Leave</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Benefits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Payroll</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Container wrapper -->
+        </nav>
         <!-- Navbar -->
     </header>
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" data-bs-backdrop="false" style="background-color:#ECECF2">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel" style="color:#FF9201;">Notifications</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="removeoldData()"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="alert-container">
+            </div>
+        </div>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/mdb5-free-standard/js/mdb.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>    @await RenderSectionAsync("Scripts", required: false)
+    <h1>Click</h1>
+    <button onclick="location.href='@Url.Action("TodayBirth","Admin")'">CLick</button>
 </body>
 <footer style="left: 50%; transform: translateX(-50%); display: block; max-width: 100vw;width:100%;" class="bg-light  text-center text-lg-start position-absolute bottom-0">    <!-- Copyright -->    <div class=" text-center p-3" style="background-color: #151566">        <a class="text-white">@@CEI India - All rights reserved</a>    </div>    <!-- Copyright --></footer>
 </html>

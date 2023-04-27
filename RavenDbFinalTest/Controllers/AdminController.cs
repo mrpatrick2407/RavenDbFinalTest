@@ -15,16 +15,18 @@ using Nest;
 using System.Security.Cryptography.X509Certificates;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
-
+using System.Net.Mail;
+using System.Net;
+using System.Globalization;
 namespace RavenDbFinalTest.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly ElasticsearchClient _client;
+        private readonly IDocumentStore store;
 
-        public AdminController(ElasticsearchClient client)
+        public AdminController(IDocumentStore _store)
         {
-            _client = client;
+            store = _store;
         }
         /*public async Task<IActionResult> Search()
         {
@@ -102,7 +104,11 @@ namespace RavenDbFinalTest.Controllers
             return View();
 
         }
+        public IActionResult Index()
+        {
+            return View();
 
+        }
 
 
         [HttpPost]
@@ -328,6 +334,90 @@ namespace RavenDbFinalTest.Controllers
             var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
 
             return Redirect("/Admin/ListEmployee");
+
+        }
+
+
+        public void SendBirthdayMail(string email, string wish)
+        {
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("ceiauthenticate@gmail.com", "hxxjwtqusjrivaqi");
+
+
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress("ceiauthenticate@gmail.com");
+            message.To.Add(new MailAddress(email));
+            message.Subject = "!!! Wishes !!!";
+            message.IsBodyHtml = true;
+            message.Body = wish;
+
+            client.Send(message);
+        }
+        public void TodayBirth()
+        {
+
+            using (var session = store.OpenSession())
+            {
+                string template = System.IO.File.ReadAllText("Template.html");
+                DateTime today = DateTime.Today;
+                List<EmployeeData> documents = session.Query<EmployeeData>(collectionName: "Employee")
+                .ToList();
+
+
+
+
+                foreach (EmployeeData document in documents)
+                {
+
+                    string message = template.Replace("{{name}}", document.Name.FirstName);
+                    DateTime date = DateTime.ParseExact(document.DateOfBirth, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    if (date.Month == today.Month && date.Day == today.Day)
+                    {
+                        Console.WriteLine("Id: {0}, Name: {1}, Date: {2}", document.EmpId, document.Name.FirstName, document.DateOfBirth);
+
+
+
+                        SendBirthdayMail(document.Email, message);
+                    }
+                }
+            }
+        }
+
+        public async Task<IActionResult> BirthdayNotification(string id)
+        {
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query example($eid: String!) {
+                birthdaynotification(eid: $eid) {
+                name {
+                  firstName
+                }
+                dateOfBirth
+                }
+                }",
+                Variables = new { eid = id }
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            //var firstName = res.Data.birthdaynotification.name.firstName.ToString();
+            Console.WriteLine(res);
+            if (res.Data.birthdaynotification.dateOfBirth == "Invalid")
+            {
+                // Handle the case where firstName is null or empty
+                // Console.WriteLine("Invalid");
+                return Content("null");
+            }
+            else
+            {
+                var firstName = res.Data.birthdaynotification.name.firstName.ToString();
+                //Console.WriteLine(firstName);
+                return Content(firstName);
+            }
+
+
 
         }
 

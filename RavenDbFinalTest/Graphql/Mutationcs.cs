@@ -175,6 +175,25 @@ namespace RavenDbFinalTest.Graphql
             }
         }
 
+        [GraphQLName("deletenotificationbyid")]
+        public Notification DeleteNotificationById(string id)
+        {
+
+            using (var session = store.OpenSession())
+            {
+
+
+
+                var notification = session.Query<Notification>(collectionName: "Notifications").FirstOrDefault(e => e.Id == id);
+
+                session.Delete(notification);
+                session.SaveChanges();
+                return notification;
+
+            }
+
+
+        }
 
         public Company DeleteEmployeeById(int EId)
         {
