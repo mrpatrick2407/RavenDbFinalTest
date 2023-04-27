@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HotChocolate.Utilities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using NuGet.Protocol.Plugins;
 using Raven.Client.Documents;
 using RavenDbFinalTest.Models;
@@ -8,6 +10,10 @@ namespace RavenDbFinalTest.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly IMemoryCache cache;
+        public LoginController(IMemoryCache _cache) {
+            cache = _cache;
+        }
         public async Task<IActionResult>  Index()
         {
             var store = new DocumentStore
@@ -33,6 +39,19 @@ namespace RavenDbFinalTest.Controllers
             }
             return View();
         }
-       
+        public void Cookie()
+        {
+            cache.Set("Loosu", "Moo", DateTime.Now.AddMinutes(10));
+        }
+        public IActionResult GetValue()
+        {
+            string value;
+
+            // Try to get the value from the cache
+           value= cache.Get("Loosu").ToString();
+            
+            return Content(value);
+        }
+
     }
 }

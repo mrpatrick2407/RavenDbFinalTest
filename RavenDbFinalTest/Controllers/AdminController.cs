@@ -104,14 +104,65 @@ namespace RavenDbFinalTest.Controllers
             return View();
 
         }
-        public IActionResult Index()
+      /*  public async Task<IActionResult> Index()
         {
-            return View();
+            List<Login> Logins;
+            using (var session = store.OpenSession())
+            {
+                Logins = session.Query<Login>().ToList();
+            }
 
-        }
 
 
-        [HttpPost]
+            var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
+            var graphqlreq = new GraphQLRequest
+            {
+                Query = @"query {
+          allEmployees {
+            id
+            name
+            role
+            phone
+            emailId
+            eid
+          }
+        }",
+            };
+            var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
+            var Employee = res.Data.allEmployees.ToObject<List<Company>>();
+
+
+
+            List<Attendance> attend = new List<Attendance>();
+            using (var session = store.OpenSession())
+            {
+                attend = session.Query<Attendance>(collectionName: "CreateNewDocs").ToList();
+            }
+
+
+
+            var attendanceByDate = attend
+            .SelectMany(x => x.DateCreated)
+            .GroupBy(x => x.Date)
+            .Select(g => new
+            {
+                Date = g.Key,
+                Count = g.Count(x => x.IsPresent == true)
+            })
+            .ToList();
+            Console.WriteLine(attendanceByDate);
+
+
+
+            ViewBag.attendanceByDate = attendanceByDate;
+            ViewBag.dateValues = attendanceByDate.Select(x => x.Date).ToList();
+
+
+
+            return View(Employee);
+        }*/
+
+            [HttpPost]
         public async Task<IActionResult> CreateEmployee(int Eid, string Name, string role, string Phone, string EmailId)
         {
             try

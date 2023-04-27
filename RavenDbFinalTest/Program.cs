@@ -35,7 +35,7 @@ builder.Services.AddSingleton<IDocumentStore>(provider =>
         Database = "TestEmployee",
         Certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7")
     }.Initialize());
-
+builder.Services.AddMemoryCache();
 
 /*Elastic local
  var settings = new ElasticsearchClientSettings(new Uri("https://localhost:9200"))
