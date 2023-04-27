@@ -9,7 +9,8 @@ using System.Security.Cryptography.X509Certificates;
 namespace RavenDbFinalTest.Controllers
 {
     public class LoginController : Controller
-    {
+    {   
+
         private readonly IMemoryCache cache;
         public LoginController(IMemoryCache _cache) {
             cache = _cache;
@@ -39,7 +40,7 @@ namespace RavenDbFinalTest.Controllers
             }
             return View();
         }
-        public void Cookie()
+        public void Cookie( )
         {
             cache.Set("Loosu", "Moo", DateTime.Now.AddMinutes(10));
         }
