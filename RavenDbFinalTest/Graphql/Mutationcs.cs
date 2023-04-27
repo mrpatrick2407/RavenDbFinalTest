@@ -81,7 +81,7 @@ namespace RavenDbFinalTest.Graphql
                     EmailAddress = email,
                     IpAddress = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                     LoginTime = DateTime.UtcNow
-
+                    
                 };
                 session.Store(login, login.Id);
                 session.SaveChanges();

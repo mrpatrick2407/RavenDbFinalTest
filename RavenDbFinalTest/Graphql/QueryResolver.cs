@@ -43,6 +43,7 @@ namespace RavenDbFinalTest.Graphql
 
                     model = session.Query<Company>(collectionName: "Companies").ToList();
                 }
+            var neww =await _client.Indices.DeleteAsync("company");
             
             var response = await _client.IndexManyAsync(model, "company");
 

@@ -47,17 +47,18 @@
             }
 
     </style>
-
+    <meta name="viweport"  content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.css" integrity="sha512-C4k/QrN4udgZnXStNFS5osxdhVECWyhMsK1pnlk+LkC7yJGCqoYxW4mH3/ZXLweODyzolwdWSqmmadudSHMRLA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12 col-lg-3 mb-1 position-relative" style="top:220px;height: 259px;left:80px;">
+        <div class="col-md-6 col-lg-3 mb-1 position-relative" style="top:180px;height: 259px;left:80px;">
+
             <div class="shadow-6-strong rounded-9 h-100 bg-white border border-1 border-secondary" id="profile" style="box-sizing: border-box;">
                 
-                    <img id="test2" height="220px"  src=" @Url.Action("GetImage", new { id = eid })" class="  position-absolute  start-50 translate-middle " style=" position: absolute;border-radius: 40px;width: 228px;height: 204px;object-fit: cover;box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.30);">
+                    <img id="test2" height="220px"  src=" @Url.Action("GetImage", new { id = eid })" class="  position-absolute  start-50 translate-middle " style="z-index:9999; position: absolute;border-radius: 40px;width: 228px;height: 204px;object-fit: cover;box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.30);">
                
 
 
@@ -66,7 +67,7 @@
                 </div>
                 <div class="btn-primary position-absolute " style="right:90px;top:100px;border:1px solid rgba(0,0,0,0.25);border-radius:50%">
                     <button onclick="selectImage()" class="position-absolute bg-white btn-primary  rounded-circle " style="bottom:0px; border:0px solid rgb(0,0,0)">
-                        <img id="camera-img" src="https://static.vecteezy.com/system/resources/thumbnails/006/998/431/small/photo-camera-icons-photo-camera-icon-design-illustration-photo-camera-simple-sign-photo-camera-image-vector.jpg" style="width: 40px; height: 40px;border-radius:50%;">
+                        <img onclick="selectImage()"  id="camera-img" src="https://static.vecteezy.com/system/resources/thumbnails/006/998/431/small/photo-camera-icons-photo-camera-icon-design-illustration-photo-camera-simple-sign-photo-camera-image-vector.jpg" style="width: 40px; height: 40px;border-radius:50%;">
                         <form id="upload-form" enctype="multipart/form-data" style="display:none;">
                             <input type="file" name="file" id="file">
                         </form>
@@ -92,7 +93,7 @@
             <p class=" text-center " style="position: absolute; top: 205px; left: 0; width: 100%; font-size: var(--font-size-lg); color: rgba(0, 0, 0, 0.59); display: inline-block;">@Model.job_Title </p>
 
         </div>
-        <div class="col-lg-8 col-md-12 col-lg-1 mb-1 position-relative" style="height: 43.3125rem; top:10px; left:5rem;">
+        <div class="col-lg-8 col-md-12 col-lg-1 mb-1 position-relative" style="height: auto; top:10px; left:5rem;">
             <div class="shadow-6-strong rounded-9 h-100 bg-white border-opacity-10 border-1 " style="box-sizing: border-box;border:1px solid rgba(0,0,0,.25)">
                 <!-- your content here -->
                 <div class="position-absolute mt-4 fs-2 fw-bold text-dark bg-white text-opacity-75 px-2 " style="left:40px;width: 16.4375rem;border-radius:20px;">
@@ -104,8 +105,8 @@
 
                 </div>
                 <form method="post" action="@Url.Action("Edit")">
-                    <div class="ms-1 mt-4 row" style="position:relative;left:20px;">
-                        <div class="col-md-6">
+                    <div class="ms-1 mt-4 row col-lg-12 col-md-12 col-sm-4" style="position:relative;left:20px;">
+                        <div class="col-md-6 col-sm-7 col-lg-6">
                             <div class="col-10 mb-4">
                                 <label for="firstName" class="form-label fs-5  ">First Name</label>
                                 <input value="@Model.firstName" type="text" class="form-control " style="height:40px;" id="firstName" name="firstName" readonly>
@@ -143,7 +144,7 @@
                             </div>
 
                         </div>
-                        <div class="input-group-append">
+                        <div class="mb-5 input-group-append ">
                             @if (ViewBag.successmessage != null)
                             {
 
@@ -153,16 +154,16 @@
                                 <button style="width:100px;" class="btn btn-secondary "  type="button" id="edit-button" >Edit</button>
                             }
 
-                        </div>
+                        
                         @if (ViewBag.successmessage != null)
                         {
                             <button type="submit" class="btn btn-primary w-25 ms-2 mt-1" style="background-color: #151566; " disabled>Requested</button>
                         }
                         else
                         {
-                            <button type="submit" class="btn btn-primary w-25 ms-2 mt-1" style="background-color: #151566; ">Request to Update</button>
+                            <button type="submit" class="btn btn-primary " style="background-color: #151566; ">Request to Update</button>
                         }
-
+                        </div>
                     </div>
                 </form>
             </div>

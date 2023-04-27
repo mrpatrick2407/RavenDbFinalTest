@@ -5,6 +5,10 @@ using RavenDbFinalTest.Graphql;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 using System.Runtime.InteropServices;
+using AspNetCore.Firebase.Authentication;
+using FirebaseAdmin;
+using RavenDbFinalTest.Models;
+using Microsoft.AspNetCore.Authorization;
 
 var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
 
@@ -22,7 +26,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(500);
+    options.IdleTimeout = TimeSpan.FromMinutes(1);
 });
 builder.Services.AddSingleton<IDocumentStore>(provider =>
     new DocumentStore
@@ -31,7 +35,8 @@ builder.Services.AddSingleton<IDocumentStore>(provider =>
         Database = "TestEmployee",
         Certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7")
     }.Initialize());
-builder.Services.AddHttpContextAccessor();
+
+
 /*Elastic local
  var settings = new ElasticsearchClientSettings(new Uri("https://localhost:9200"))
                 .CertificateFingerprint("3df6a5aad7a93475424b4d84e5707c258f2020457634503d56ab21e9bf7870dc")
@@ -45,7 +50,8 @@ var client = new ElasticsearchClient(settings);
 builder.Services.AddSingleton<ElasticsearchClient>(client);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-    //    .AddSchemaFromFile("./GraphQL/schema.graphql"); 
+
+//    .AddSchemaFromFile("./GraphQL/schema.graphql"); 
 
 
 var app = builder.Build();

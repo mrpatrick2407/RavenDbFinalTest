@@ -5,7 +5,7 @@ using System.Diagnostics;
 using Raven.Client.Documents;
 using RavenDbFinalTest.Models;
 using Raven.Client.Documents;
-
+using System.IdentityModel.Tokens.Jwt;
 
 
 using GraphQL.Client.Http;
@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Text;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authentication;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -234,6 +235,7 @@ namespace RavenDbFinalTest.Controllers
             {
                 Console.WriteLine("Else");
                 HttpContext.Session.SetString("cToken", ctoken);
+                
                 string myValue = HttpContext.Session.GetString("cToken");
                 return Content("Valid OTP");
 
@@ -484,14 +486,8 @@ namespace RavenDbFinalTest.Controllers
 
                 return Content(Status);
             }
-
             return Ok();
-            
-           
-            
-          
-
-
+ 
         }
 
         
@@ -592,6 +588,7 @@ namespace RavenDbFinalTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(Profile2 model)
         {
+
             string eid = HttpContext.Session.GetString("usereid");
             int eid2 = Int16.Parse(eid);
             model.eid = eid2;

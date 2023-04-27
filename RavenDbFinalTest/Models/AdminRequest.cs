@@ -4,7 +4,7 @@ namespace RavenDbFinalTest.Models
 {
     public class AdminRequest
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int? eid { get; set; }
         [Display(Name = "First Name ")]
 

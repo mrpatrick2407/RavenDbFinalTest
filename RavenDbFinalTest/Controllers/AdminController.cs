@@ -13,6 +13,8 @@ using Elastic.Clients.Elasticsearch;
 using System;
 using Nest;
 using System.Security.Cryptography.X509Certificates;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RavenDbFinalTest.Controllers
 {
@@ -198,8 +200,25 @@ namespace RavenDbFinalTest.Controllers
             return View(requests);
         }
 
+
+       
         public async Task<IActionResult> ListEmployee()
         {
+            if (!Request.Headers.ContainsKey("Authorization"))
+            {
+                // Return a 400 Bad Request response if the Authorization header is missing
+                return BadRequest("Authorization header is missing");
+            }
+
+            string idToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTY4MjUwNjc1NCwiZXhwIjoxNjgyNTEwMzU0LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay11ZTA4aEBmaXItYXV0aC1kZDhjZS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6ImZpcmViYXNlLWFkbWluc2RrLXVlMDhoQGZpci1hdXRoLWRkOGNlLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwidWlkIjoiVldzMjBkdjhrcmIyMHgxSk5hVTRXRno3MHk4MyJ9.AFyubXdoKvbUx6y5QtAf9I8jognwJW3OJye_K4WMq1vGNQau-wAZWykRth-bHLUoiaewe0HdheHtyi4WRFLbFWav5qBdwmR2fqBZRyIeawgrKeXEqjH_R0XRm_FLRXPVgB2hj1vcKAY4IZXtaubSZYr4vzgqQ0wg8j8gJ6dYtmDPxB9Sn60EKpKa1LlLlC2Hyp6KCw0_fXXusBS2ZtbOHYTfYtlb7NIqf1FUlAS_QpDFf4k4PhnaeikFyjh_jTauYDLxk-PyrjulgDIv3F0g4so-n1eYGIxzVpPikp0sAxdiiIilEu332ZF-CEULQ-r6BwtQv6yHQeGVJ7L2RaQO1w";
+
+            // Decode the ID token
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(idToken);
+
+            // Get the user's email address from the token's claims
+            string userEmail = token.Claims.FirstOrDefault(c => c.Type == "iat")?.Value;
+            Console.WriteLine("Useremail" + userEmail);
             var client = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
             var graphqlreq = new GraphQLHttpRequest
             {
