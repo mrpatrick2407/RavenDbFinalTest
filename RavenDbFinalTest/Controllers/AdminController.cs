@@ -384,6 +384,8 @@ namespace RavenDbFinalTest.Controllers
             };
             var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
 
+
+
             return Redirect("/Admin/ListEmployee");
 
         }
