@@ -23,7 +23,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authentication;
 namespace RavenDbFinalTest.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
@@ -34,8 +34,9 @@ namespace RavenDbFinalTest.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+           
             return View();
 
         }
@@ -43,6 +44,7 @@ namespace RavenDbFinalTest.Controllers
 
         public async Task<IActionResult> Index(String email)
         {
+            
             var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://new-autentication.onrender.com/") }, new NewtonsoftJsonSerializer());
             var graphqlreq = new GraphQLRequest
             {
@@ -117,7 +119,7 @@ namespace RavenDbFinalTest.Controllers
 
         }
         public async Task<IActionResult> Notifications(int id, DateTime timestamp)
-        {
+        {   
             var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
             var graphqlreq = new GraphQLRequest
             {

@@ -18,9 +18,11 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net.Mail;
 using System.Net;
 using System.Globalization;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
+using System.Web;
 namespace RavenDbFinalTest.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
         private readonly IDocumentStore store;
 
@@ -101,10 +103,13 @@ namespace RavenDbFinalTest.Controllers
 
         public IActionResult CreateEmployee()
         {
+            // Create a role
+           
+
             return View();
 
         }
-      /*  public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             List<Login> Logins;
             using (var session = store.OpenSession())
@@ -118,7 +123,7 @@ namespace RavenDbFinalTest.Controllers
             var graphqlreq = new GraphQLRequest
             {
                 Query = @"query {
-          allEmployees {
+          getallemployees {
             id
             name
             role
@@ -129,7 +134,7 @@ namespace RavenDbFinalTest.Controllers
         }",
             };
             var res = await client2.SendQueryAsync<dynamic>(graphqlreq);
-            var Employee = res.Data.allEmployees.ToObject<List<Company>>();
+            var Employee = res.Data.getallemployees.ToObject<List<Company>>();
 
 
 
@@ -160,7 +165,7 @@ namespace RavenDbFinalTest.Controllers
 
 
             return View(Employee);
-        }*/
+        }
 
             [HttpPost]
         public async Task<IActionResult> CreateEmployee(int Eid, string Name, string role, string Phone, string EmailId)
@@ -197,7 +202,10 @@ namespace RavenDbFinalTest.Controllers
             }
             return View();
         }
+
         [HttpPost]
+        
+
         public async Task<IActionResult> Action(int id, bool check)
         {
             if (id == null || id == 0)
@@ -230,6 +238,8 @@ namespace RavenDbFinalTest.Controllers
 
 
         }
+
+       
         public async Task<IActionResult> AdminRequest()
         {
             var client2 = new GraphQLHttpClient(new GraphQLHttpClientOptions { EndPoint = new Uri("https://localhost:7000/graphql") }, new NewtonsoftJsonSerializer());
@@ -473,6 +483,6 @@ namespace RavenDbFinalTest.Controllers
 
 
         }
-
+        
     }
 }

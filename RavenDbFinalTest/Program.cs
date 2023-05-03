@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Security.Claims;
 
 var certificate = new X509Certificate2("Cloud.pfx", "93EE9D996433A0E1B61FF03749B2AFC7");
 
@@ -52,7 +54,9 @@ var settings = new ElasticsearchClientSettings(new Uri("https://my-deployment-bd
 var client = new ElasticsearchClient(settings);
 builder.Services.AddSingleton<ElasticsearchClient>(client);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddAuthentication(options =>
+
+
+/*builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,16 +64,12 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        
-        ValidIssuer = "your-issuer",
+       
        
         
     };
 });
-
+*/
 //    .AddSchemaFromFile("./GraphQL/schema.graphql"); 
 
 
@@ -87,11 +87,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapGraphQL("/graphql");
 
 
-app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(
     name: "default",

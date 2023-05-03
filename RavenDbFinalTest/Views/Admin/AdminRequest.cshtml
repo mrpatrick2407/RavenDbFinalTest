@@ -189,7 +189,9 @@
         var params = "id=" + eid + "&check=" + check;
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.setRequestHeader("Authorization", "Bearer " + "VWs20dv8krb20x1JNaU4WFz70y83");
+        var tokenize = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTY4MjY2NzE5MCwiZXhwIjoxNjgyNjcwNzkwLCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay11ZTA4aEBmaXItYXV0aC1kZDhjZS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6ImZpcmViYXNlLWFkbWluc2RrLXVlMDhoQGZpci1hdXRoLWRkOGNlLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwidWlkIjoiVldzMjBkdjhrcmIyMHgxSk5hVTRXRno3MHk4MyJ9.zU91d38QW2H53oTCtWSZXzTjsEh92UDWf01Sf4120ZChjnvldkquSq9tsAZS4iJs"
+        xhr.setRequestHeader("Authorization", "Bearer "+tokenize   );
+
         xhr.onload = function () {
             if (xhr.status == 200) {
                 setTimeout(function () {
@@ -268,7 +270,7 @@
 
                 }, 3000)
                 setTimeout(() => {
-                    location.reload();
+                    //location.reload();
                 }, 1200)
 
             }
